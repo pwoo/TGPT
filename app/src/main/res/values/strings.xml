@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">TGPT</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="regular_price">regularprice</string>
+    <string name="json_url">http://tomorrowsgaspricetoday.com/feed-mobile-jsonout.php?city=</string>
+
+    <string name="pref_city">last_city</string>
+
+</resources>
