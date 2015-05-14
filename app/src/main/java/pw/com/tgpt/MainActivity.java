@@ -27,15 +27,9 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        City.init(getResources());
         ArrayAdapter<City> cities = new ArrayAdapter<City>(this, R.layout.city_spinner_view);
-        try {
-            XmlResourceParser parser = getResources().getXml(R.xml.cities);
-            ArrayList<City> cityList = City.GenerateCities(parser);
-            cities.addAll(cityList);
-        }
-        catch (Resources.NotFoundException e) {
-            // TODO: Kill process / activity
-        }
+        cities.addAll(City.getCitiesArray());
 
         Spinner spin = (Spinner) findViewById(R.id.cities);
         if (spin != null) {
@@ -49,14 +43,19 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
     public void onItemSelected(AdapterView<?> parent, View view,
                                int pos, long id) {
         final City city = (City) parent.getItemAtPosition(pos);
-        mExecutor.execute(new Runnable() {
-                              @Override
-                              public void run() {
-                                  city.updateTGPTData(getApplicationContext());
-                                  updatePrices(city);
-                              }
-                          }
-        );
+        Runnable updateCity = new Runnable() {
+            @Override
+            public void run() {
+                if (city.updateTGPTData(getApplicationContext())) {
+                    updatePrices(city);
+                }
+                else {
+                    mExecutor.execute(this);
+                }
+            }
+        };
+
+        mExecutor.execute(updateCity);
     }
 
     private void updatePrices(City city) {

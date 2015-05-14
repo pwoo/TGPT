@@ -1,7 +1,10 @@
 package pw.com.tgpt;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -19,6 +22,7 @@ import java.util.ArrayList;
  * Created by PW on 2015-04-26.
  */
 public class City {
+    private static ArrayList<City> cityList;
     private static final String TAG = "TGPT";
     private int id;
     private String name;
@@ -35,6 +39,31 @@ public class City {
         NO_CHANGE
     }
 
+    public static void init(Resources r) {
+        try {
+            if (cityList == null || cityList.isEmpty()) {
+                XmlResourceParser parser = r.getXml(R.xml.cities);
+                cityList = City.GenerateCities(parser);
+            }
+        }
+        catch (Resources.NotFoundException e) {
+            // TODO: Kill process / activity
+        }
+    }
+
+    public static ArrayList<City> getCitiesArray() {
+        return cityList;
+    }
+
+    public static City getCity(int id) {
+        for (City c : cityList) {
+            if (c.getID() == id) {
+                return c;
+            }
+        }
+        return null;
+    }
+
     public City() {
     }
 
@@ -43,7 +72,7 @@ public class City {
         this.name = name;
     }
 
-    public static ArrayList<City> GenerateCities(XmlResourceParser parser) {
+    private static ArrayList<City> GenerateCities(XmlResourceParser parser) {
         int id = -1;
         String name = null;
         ArrayList<City> cityList = new ArrayList<City>();
@@ -86,25 +115,29 @@ public class City {
     }
 
     public boolean updateTGPTData(Context appContext) {
-        boolean res = true;
+        boolean res = false;
         InputStream in = null;
-        try {
-            String spec = appContext.getString(R.string.json_url) + getID();
-            URL url = new URL(spec);
-            URLConnection urlConnection = url.openConnection();
-            in = new BufferedInputStream(urlConnection.getInputStream());
 
-            readJSON(in, appContext);
-        } catch (NullPointerException | IOException | JSONException e) {
-            res = false;
-        }
-        finally {
-            if (in != null) {
-                try {
-                    in.close();
-                }
-                catch (IOException e) {
-                    // TODO
+        ConnectivityManager connectivityManager = (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        if (activeNetworkInfo != null && activeNetworkInfo.isConnected()) {
+            try {
+                String spec = appContext.getString(R.string.json_url) + getID();
+                URL url = new URL(spec);
+                URLConnection urlConnection = url.openConnection();
+                in = new BufferedInputStream(urlConnection.getInputStream());
+
+                readJSON(in, appContext);
+                res = true;
+            } catch (NullPointerException | IOException | JSONException e) {
+                res = false;
+            } finally {
+                if (in != null) {
+                    try {
+                        in.close();
+                    } catch (IOException e) {
+                        // TODO
+                    }
                 }
             }
         }

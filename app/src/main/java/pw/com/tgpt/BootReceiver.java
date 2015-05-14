@@ -17,6 +17,7 @@ public class BootReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "Boot message received!");
         // TODO: Start service that sends current price to notifications
+        City.init(context.getResources());
         Context appContext = context.getApplicationContext();
         Intent i = new Intent(appContext, PushUpdateService.class);
         i.setAction("pw.com.tgpt.action.FOO");

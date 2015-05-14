@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -22,15 +23,14 @@ public class PushUpdateService extends IntentService {
     private static final String TAG = "TGPT";
     // TODO: Rename actions, choose action names that describe tasks that this
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
-    private static Semaphore serviceMutex = new Semaphore(1, true);
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-    private static final String ACTION_FOO = "pw.com.tgpt.action.FOO";
-    private static final String ACTION_BAZ = "pw.com.tgpt.action.BAZ";
-
-    // TODO: Rename parameters
-    private static final String EXTRA_PARAM1 = "pw.com.tgpt.extra.PARAM1";
-    private static final String EXTRA_PARAM2 = "pw.com.tgpt.extra.PARAM2";
+//    private static final String ACTION_FOO = "pw.com.tgpt.action.FOO";
+//    private static final String ACTION_BAZ = "pw.com.tgpt.action.BAZ";
+//
+//    // TODO: Rename parameters
+//    private static final String EXTRA_PARAM1 = "pw.com.tgpt.extra.PARAM1";
+//    private static final String EXTRA_PARAM2 = "pw.com.tgpt.extra.PARAM2";
 
     /**
      * Starts this service to perform action Foo with the given parameters. If
@@ -38,13 +38,20 @@ public class PushUpdateService extends IntentService {
      *
      * @see IntentService
      */
-    // TODO: Customize helper method
-    public static void startActionFoo(Context context, String param1, String param2) {
-        Intent intent = new Intent(context, PushUpdateService.class);
-        intent.setAction(ACTION_FOO);
-        intent.putExtra(EXTRA_PARAM1, param1);
-        intent.putExtra(EXTRA_PARAM2, param2);
-        context.startService(intent);
+//    // TODO: Customize helper method
+//    public static void startActionFoo(Context context, String param1, String param2) {
+//        Intent intent = new Intent(context, PushUpdateService.class);
+//        intent.setAction(ACTION_FOO);
+//        intent.putExtra(EXTRA_PARAM1, param1);
+//        intent.putExtra(EXTRA_PARAM2, param2);
+//        context.startService(intent);
+//    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        City.init(getResources());
     }
 
     /**
@@ -53,14 +60,14 @@ public class PushUpdateService extends IntentService {
      *
      * @see IntentService
      */
-    // TODO: Customize helper method
-    public static void startActionBaz(Context context, String param1, String param2) {
-        Intent intent = new Intent(context, PushUpdateService.class);
-        intent.setAction(ACTION_BAZ);
-        intent.putExtra(EXTRA_PARAM1, param1);
-        intent.putExtra(EXTRA_PARAM2, param2);
-        context.startService(intent);
-    }
+//    // TODO: Customize helper method
+//    public static void startActionBaz(Context context, String param1, String param2) {
+//        Intent intent = new Intent(context, PushUpdateService.class);
+//        intent.setAction(ACTION_BAZ);
+//        intent.putExtra(EXTRA_PARAM1, param1);
+//        intent.putExtra(EXTRA_PARAM2, param2);
+//        context.startService(intent);
+//    }
 
     public PushUpdateService() {
         super("PushUpdateService");
@@ -75,34 +82,31 @@ public class PushUpdateService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-//        while (true) {
-            try {
-                serviceMutex.acquire();
-                if (intent != null) {
-                    final String param1 = intent.getStringExtra(EXTRA_PARAM1);
-                    final String param2 = intent.getStringExtra(EXTRA_PARAM2);
-                    final Context appContext = this.getApplicationContext();
-                    final Runnable notification = new Runnable() {
-                        @Override
-                        public void run() {
-                            Log.v(TAG, "onHandleIntent");
-                            NotificationCompat.Builder n = new NotificationCompat.Builder(appContext);
-                            n.setSmallIcon(R.mipmap.ic_launcher);
-                            n.setContentText("hello world!");
-                            n.setContentTitle("My notification!");
-
+        if (intent != null) {
+//                    final String param1 = intent.getStringExtra(EXTRA_PARAM1);
+//                    final String param2 = intent.getStringExtra(EXTRA_PARAM2);
+            SharedPreferences settings = getSharedPreferences(TAG, MODE_PRIVATE);
+            final Context appContext = this.getApplicationContext();
+            int cityId = settings.getInt("pcityid", -1);
+            final City savedCity = City.getCity(cityId);
+            final Runnable notification = new Runnable() {
+                @Override
+                public void run() {
+                    Log.v(TAG, "onHandleIntent");
+                    NotificationCompat.Builder n = new NotificationCompat.Builder(appContext);
+                    n.setSmallIcon(R.mipmap.ic_launcher);
+                    if (savedCity != null) {
+                        if (savedCity.updateTGPTData(appContext)) {
+                            n.setContentText(new Double(savedCity.getRegularPrice()).toString());
+                            n.setContentTitle("Current gas price in " + savedCity.getName());
                             NotificationManager notifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                             notifyMgr.notify(123, n.build());
                         }
-                    };
-                    notification.run();
+                    }
                 }
-                serviceMutex.release();
-            }
-            catch (InterruptedException e) {
-
-            }
-//        }
+            };
+            notification.run();
+        }
     }
 
     /**
