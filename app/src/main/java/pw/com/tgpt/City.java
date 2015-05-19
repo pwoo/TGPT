@@ -43,7 +43,7 @@ public class City {
         try {
             if (cityList == null || cityList.isEmpty()) {
                 XmlResourceParser parser = r.getXml(R.xml.cities);
-                cityList = City.GenerateCities(parser);
+                cityList = City.generateCities(parser);
             }
         }
         catch (Resources.NotFoundException e) {
@@ -72,7 +72,7 @@ public class City {
         this.name = name;
     }
 
-    private static ArrayList<City> GenerateCities(XmlResourceParser parser) {
+    private static ArrayList<City> generateCities(XmlResourceParser parser) {
         int id = -1;
         String name = null;
         ArrayList<City> cityList = new ArrayList<City>();
@@ -159,6 +159,16 @@ public class City {
         setRegularPrice(parser.getDouble(appContext.getString(R.string.tgpt_regular_price)));
         setRegularDiff(parser.getDouble(appContext.getString(R.string.tgpt_regular_diff)));
         setLastWeekRegular(parser.getDouble(appContext.getString(R.string.tgpt_last_week_regular)));
+        String tempDirection = parser.getString("regulardirection");
+        Direction direction = Direction.NO_CHANGE;
+        if (tempDirection.equals("+")) {
+            direction = Direction.UP;
+        }
+        else if (tempDirection.equals("-")) {
+            direction = Direction.DOWN;
+        }
+
+        setDirection(direction);
     }
 
     public void setID(int id) {

@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 
 public class BootReceiver extends BroadcastReceiver {
-    private static final String TAG = "TGPT";
+    private static final String TAG = "RECV";
 
     public BootReceiver() {
         super();
@@ -21,6 +21,7 @@ public class BootReceiver extends BroadcastReceiver {
         Context appContext = context.getApplicationContext();
         Intent i = new Intent(appContext, PushUpdateService.class);
         i.setAction("pw.com.tgpt.action.FOO");
+
         appContext.startService(i);
     }
 }

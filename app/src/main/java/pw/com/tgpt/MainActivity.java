@@ -1,9 +1,11 @@
 package pw.com.tgpt;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.content.res.XmlResourceParser;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,13 +15,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
 public class MainActivity extends Activity implements AdapterView.OnItemSelectedListener {
-    private static final String TAG = "TGPT";
+    private static final String TAG = "MAIN";
     ExecutorService mExecutor = Executors.newSingleThreadExecutor();
 
     @Override
@@ -38,6 +40,21 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
             spin.setSelection(settings.getInt(getResources().getString(R.string.pref_selected_city_spin), 0));
             spin.setOnItemSelectedListener(this);
         }
+        createAlarm();
+    }
+
+    private void createAlarm() {
+        AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, PushUpdateService.class);
+
+        PendingIntent alarmIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR, 10);
+        calendar.set(Calendar.MINUTE, 33);
+
+        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000,
+                1000, alarmIntent);
     }
 
     public void onItemSelected(AdapterView<?> parent, View view,
@@ -69,12 +86,10 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         });
     }
 
-
-
     protected void onPause() {
         super.onPause();
 
-        SharedPreferences settings = getSharedPreferences(TAG, MODE_PRIVATE);
+        SharedPreferences settings = getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
         Spinner spin = (Spinner) findViewById(R.id.cities);
         City currentCity = (City) spin.getSelectedItem();

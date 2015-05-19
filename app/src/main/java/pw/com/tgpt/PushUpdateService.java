@@ -10,7 +10,6 @@ import android.util.Log;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.Semaphore;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -20,32 +19,14 @@ import java.util.concurrent.Semaphore;
  * helper methods.
  */
 public class PushUpdateService extends IntentService {
-    private static final String TAG = "TGPT";
+    private static final String TAG = "PUSH";
+    private static final String ACTION_UPDATE_NOTIFICATION = "pw.com.tgpt.action.SET_NOTIFICATION";
+    private static final String ACTION_CANCEL_NOTIFICATION = "pw.com.tgpt.action.CANCEL_NOTIFICATION";
+    private static final int NOTIFY_ID = 0;
+
     // TODO: Rename actions, choose action names that describe tasks that this
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-
-//    private static final String ACTION_FOO = "pw.com.tgpt.action.FOO";
-//    private static final String ACTION_BAZ = "pw.com.tgpt.action.BAZ";
-//
-//    // TODO: Rename parameters
-//    private static final String EXTRA_PARAM1 = "pw.com.tgpt.extra.PARAM1";
-//    private static final String EXTRA_PARAM2 = "pw.com.tgpt.extra.PARAM2";
-
-    /**
-     * Starts this service to perform action Foo with the given parameters. If
-     * the service is already performing a task this action will be queued.
-     *
-     * @see IntentService
-     */
-//    // TODO: Customize helper method
-//    public static void startActionFoo(Context context, String param1, String param2) {
-//        Intent intent = new Intent(context, PushUpdateService.class);
-//        intent.setAction(ACTION_FOO);
-//        intent.putExtra(EXTRA_PARAM1, param1);
-//        intent.putExtra(EXTRA_PARAM2, param2);
-//        context.startService(intent);
-//    }
 
     @Override
     public void onCreate() {
@@ -53,21 +34,6 @@ public class PushUpdateService extends IntentService {
 
         City.init(getResources());
     }
-
-    /**
-     * Starts this service to perform action Baz with the given parameters. If
-     * the service is already performing a task this action will be queued.
-     *
-     * @see IntentService
-     */
-//    // TODO: Customize helper method
-//    public static void startActionBaz(Context context, String param1, String param2) {
-//        Intent intent = new Intent(context, PushUpdateService.class);
-//        intent.setAction(ACTION_BAZ);
-//        intent.putExtra(EXTRA_PARAM1, param1);
-//        intent.putExtra(EXTRA_PARAM2, param2);
-//        context.startService(intent);
-//    }
 
     public PushUpdateService() {
         super("PushUpdateService");
@@ -80,50 +46,39 @@ public class PushUpdateService extends IntentService {
         super.onDestroy();
     }
 
-    @Override
-    protected void onHandleIntent(Intent intent) {
-        if (intent != null) {
-//                    final String param1 = intent.getStringExtra(EXTRA_PARAM1);
-//                    final String param2 = intent.getStringExtra(EXTRA_PARAM2);
-            SharedPreferences settings = getSharedPreferences(TAG, MODE_PRIVATE);
-            final Context appContext = this.getApplicationContext();
-            int cityId = settings.getInt("pcityid", -1);
-            final City savedCity = City.getCity(cityId);
-            final Runnable notification = new Runnable() {
-                @Override
-                public void run() {
-                    Log.v(TAG, "onHandleIntent");
-                    NotificationCompat.Builder n = new NotificationCompat.Builder(appContext);
-                    n.setSmallIcon(R.mipmap.ic_launcher);
-                    if (savedCity != null) {
-                        if (savedCity.updateTGPTData(appContext)) {
-                            n.setContentText(new Double(savedCity.getRegularPrice()).toString());
-                            n.setContentTitle("Current gas price in " + savedCity.getName());
-                            NotificationManager notifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                            notifyMgr.notify(123, n.build());
-                        }
-                    }
-                }
-            };
-            notification.run();
+    private void handleActionUpdate() {
+        SharedPreferences settings = getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE);
+        final Context appContext = this.getApplicationContext();
+        int cityId = settings.getInt("pcityid", -1);
+        final City savedCity = City.getCity(cityId);
+
+        NotificationCompat.Builder n = new NotificationCompat.Builder(appContext);
+        n.setSmallIcon(R.mipmap.ic_launcher);
+        if (savedCity != null) {
+            if (savedCity.updateTGPTData(appContext)) {
+                n.setContentText(new Double(savedCity.getRegularPrice()).toString());
+                n.setContentTitle("Current gas price in " + savedCity.getName());
+                NotificationManager notifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                notifyMgr.notify(NOTIFY_ID, n.build());
+            }
         }
     }
 
-    /**
-     * Handle action Foo in the provided background thread with the provided
-     * parameters.
-     */
-    private void handleActionFoo(String param1, String param2) {
-        // TODO: Handle action Foo
-        throw new UnsupportedOperationException("Not yet implemented");
+    // TODO
+    private void handleActionCancel() {
+
     }
 
-    /**
-     * Handle action Baz in the provided background thread with the provided
-     * parameters.
-     */
-    private void handleActionBaz(String param1, String param2) {
-        // TODO: Handle action Baz
-        throw new UnsupportedOperationException("Not yet implemented");
+    @Override
+    protected void onHandleIntent(Intent intent) {
+        Log.v(TAG, "onHandleIntent");
+        if (intent != null) {
+            if (intent.getAction().equals(ACTION_UPDATE_NOTIFICATION)) {
+                handleActionUpdate();
+            }
+            else if (intent.getAction().equals(ACTION_CANCEL_NOTIFICATION)) {
+                handleActionCancel();
+            }
+        }
     }
 }
