@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import pw.com.tgpt.PushUpdateService;
+
 public class BootReceiver extends BroadcastReceiver {
     private static final String TAG = "RECV";
 
@@ -20,7 +22,7 @@ public class BootReceiver extends BroadcastReceiver {
         City.init(context.getResources());
         Context appContext = context.getApplicationContext();
         Intent i = new Intent(appContext, PushUpdateService.class);
-        i.setAction("pw.com.tgpt.action.FOO");
+        i.setAction(PushUpdateService.ACTION_UPDATE_NOTIFICATION);
 
         appContext.startService(i);
     }

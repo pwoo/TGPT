@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,13 +15,16 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import java.util.Calendar;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import pw.com.tgpt.PushUpdateService;
 
-public class MainActivity extends Activity implements AdapterView.OnItemSelectedListener {
+
+public class MainActivity extends Activity implements AdapterView.OnItemSelectedListener, TimePicker.OnTimeChangedListener {
     private static final String TAG = "MAIN";
     ExecutorService mExecutor = Executors.newSingleThreadExecutor();
 
@@ -40,7 +44,11 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
             spin.setSelection(settings.getInt(getResources().getString(R.string.pref_selected_city_spin), 0));
             spin.setOnItemSelectedListener(this);
         }
-        createAlarm();
+
+        TimePicker timePicker = (TimePicker) findViewById(R.id.time_picker);
+        if (timePicker != null) {
+            timePicker.setOnTimeChangedListener(this);
+        }
     }
 
     private void createAlarm() {
@@ -53,8 +61,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         calendar.set(Calendar.HOUR, 10);
         calendar.set(Calendar.MINUTE, 33);
 
-        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000,
-                1000, alarmIntent);
+//        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000,
+//                1000, alarmIntent);
     }
 
     public void onItemSelected(AdapterView<?> parent, View view,
@@ -125,5 +133,22 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+        AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(PushUpdateService.ACTION_UPDATE_NOTIFICATION);
+
+        PendingIntent alarmIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        calendar.set(Calendar.MINUTE, minute);
+
+        alarmMgr.setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, alarmIntent);
+
+        Log.v(TAG, "Update notification set to " + hourOfDay + ":" + minute);
     }
 }

@@ -20,8 +20,8 @@ import java.util.concurrent.ScheduledExecutorService;
  */
 public class PushUpdateService extends IntentService {
     private static final String TAG = "PUSH";
-    private static final String ACTION_UPDATE_NOTIFICATION = "pw.com.tgpt.action.SET_NOTIFICATION";
-    private static final String ACTION_CANCEL_NOTIFICATION = "pw.com.tgpt.action.CANCEL_NOTIFICATION";
+    public static final String ACTION_UPDATE_NOTIFICATION = "pw.com.tgpt.action.SET_NOTIFICATION";
+    public static final String ACTION_CANCEL_NOTIFICATION = "pw.com.tgpt.action.CANCEL_NOTIFICATION";
     private static final int NOTIFY_ID = 0;
 
     // TODO: Rename actions, choose action names that describe tasks that this

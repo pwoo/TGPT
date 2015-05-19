@@ -28,16 +28,10 @@
         android:text="New Text"
         android:id="@+id/direction" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/textView2" />
-
     <TimePicker
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/timePicker" />
+        android:id="@+id/time_picker" />
 
 
 </LinearLayout>
