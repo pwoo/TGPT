@@ -38,8 +38,12 @@
             android:enabled="true"
             android:exported="false" >
             <intent-filter>
-                <action android:name="pw.com.tgpt.action.SET_NOTIFICATION" />
-                <action android:name="pw.com.tgpt.action.CANCEL_NOTIFICATION" />
+                <action android:name="pw.com.tgpt.action.CREATE_STATIC_NOTIFICATION" />
+                <action android:name="pw.com.tgpt.action.STATIC_NOTIFICATION" />
+                <action android:name="pw.com.tgpt.action.CANCEL_STATIC_NOTIFICATION" />
+                <action android:name="pw.com.tgpt.action.CREATE_DYNAMIC_NOTIFICATION" />
+                <action android:name="pw.com.tgpt.action.DYNAMIC_NOTIFICATION" />
+                <action android:name="pw.com.tgpt.action.CANCEL_DYNAMIC_NOTIFICATION" />
             </intent-filter>
         </service>
 

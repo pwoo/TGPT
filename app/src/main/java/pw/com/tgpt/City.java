@@ -22,8 +22,8 @@ import java.util.ArrayList;
  * Created by PW on 2015-04-26.
  */
 public class City {
+    private static final String TAG = "CITY";
     private static ArrayList<City> cityList;
-    private static final String TAG = "TGPT";
     private int id;
     private String name;
     private double regularPrice;
@@ -56,6 +56,10 @@ public class City {
     }
 
     public static City getCity(int id) {
+        if (cityList.isEmpty()) {
+            Log.w(TAG, "City class uninitialized!");
+        }
+
         for (City c : cityList) {
             if (c.getID() == id) {
                 return c;

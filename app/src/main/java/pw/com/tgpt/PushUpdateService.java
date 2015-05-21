@@ -1,15 +1,14 @@
 package pw.com.tgpt;
 
+import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -20,13 +19,17 @@ import java.util.concurrent.ScheduledExecutorService;
  */
 public class PushUpdateService extends IntentService {
     private static final String TAG = "PUSH";
-    public static final String ACTION_UPDATE_NOTIFICATION = "pw.com.tgpt.action.SET_NOTIFICATION";
-    public static final String ACTION_CANCEL_NOTIFICATION = "pw.com.tgpt.action.CANCEL_NOTIFICATION";
-    private static final int NOTIFY_ID = 0;
+    public static final String ACTION_CREATE_STATIC_NOTIFICATION = "pw.com.tgpt.action.CREATE_STATIC_NOTIFICATION";
+    public static final String ACTION_STATIC_NOTIFICATION = "pw.com.tgpt.action.STATIC_NOTIFICATION";
+    public static final String ACTION_CANCEL_STATIC_NOTIFICATION = "pw.com.tgpt.action.CANCEL_STATIC_NOTIFICATION";
+    public static final String ACTION_CREATE_DYNAMIC_NOTIFICATION = "pw.com.tgpt.action.CREATE_DYNAMIC_NOTIFICATION";
+    public static final String ACTION_DYNAMIC_NOTIFICATION = "pw.com.tgpt.action.DYNAMIC_NOTIFICATION";
+    public static final String ACTION_CANCEL_DYNAMIC_NOTIFICATION = "pw.com.tgpt.action.CANCEL_DYNAMIC_NOTIFICATION";
 
-    // TODO: Rename actions, choose action names that describe tasks that this
-    // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    public static final String ALARM_TRIGGER_AT_MILLIS = "alarm.triggerAtMillis";
+    public static final String ALARM_INTERVAL_MILLIS = "alarm.intervalMillis";
+
+    private static final int NOTIFY_ID = 0;
 
     @Override
     public void onCreate() {
@@ -46,7 +49,30 @@ public class PushUpdateService extends IntentService {
         super.onDestroy();
     }
 
-    private void handleActionUpdate() {
+    private void handleActionCreate(String action, long triggerAtMillis, long intervalAtMillis) {
+        Log.v(TAG, "handleActionCreate(" + action + ")");
+
+        AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(action);
+
+        PendingIntent alarmIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, triggerAtMillis,
+                AlarmManager.INTERVAL_HALF_HOUR, alarmIntent);
+    }
+
+    // TODO
+    private void handleActionCancel(String action) {
+        Log.v(TAG, "handleActionCancel(" + action + ")");
+
+        AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(action);
+
+        PendingIntent alarmIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    private void handleActionUpdate(String action) {
+        Log.v(TAG, "handleActionUpdate(" + action + ")");
+
         SharedPreferences settings = getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE);
         final Context appContext = this.getApplicationContext();
         int cityId = settings.getInt("pcityid", -1);
@@ -64,20 +90,34 @@ public class PushUpdateService extends IntentService {
         }
     }
 
-    // TODO
-    private void handleActionCancel() {
-
-    }
-
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.v(TAG, "onHandleIntent");
         if (intent != null) {
-            if (intent.getAction().equals(ACTION_UPDATE_NOTIFICATION)) {
-                handleActionUpdate();
+            if (intent.getAction().equals(ACTION_DYNAMIC_NOTIFICATION) || intent.getAction().equals(ACTION_STATIC_NOTIFICATION)) {
+                handleActionUpdate(intent.getAction());
             }
-            else if (intent.getAction().equals(ACTION_CANCEL_NOTIFICATION)) {
-                handleActionCancel();
+            else if (intent.getAction().equals(ACTION_CREATE_DYNAMIC_NOTIFICATION)) {
+                long triggerAtMillis = intent.getLongExtra(ALARM_TRIGGER_AT_MILLIS, -1);
+                long intervalMillis = intent.getLongExtra(ALARM_INTERVAL_MILLIS, -1);
+
+                if (triggerAtMillis != -1 && intervalMillis != -1) {
+                    handleActionCreate(ACTION_DYNAMIC_NOTIFICATION, triggerAtMillis, intervalMillis);
+                }
+            }
+            else if (intent.getAction().equals(ACTION_CREATE_STATIC_NOTIFICATION)) {
+                long triggerAtMillis = intent.getLongExtra(ALARM_TRIGGER_AT_MILLIS, -1);
+                long intervalMillis = intent.getLongExtra(ALARM_INTERVAL_MILLIS, -1);
+
+                if (triggerAtMillis != -1 && intervalMillis != -1) {
+                    handleActionCreate(ACTION_STATIC_NOTIFICATION, triggerAtMillis, intervalMillis);
+                }
+            }
+            else if (intent.getAction().equals(ACTION_CANCEL_DYNAMIC_NOTIFICATION)) {
+                handleActionCancel(ACTION_DYNAMIC_NOTIFICATION);
+            }
+            else if (intent.getAction().equals(ACTION_CANCEL_STATIC_NOTIFICATION)) {
+                handleActionCancel(ACTION_STATIC_NOTIFICATION);
             }
         }
     }

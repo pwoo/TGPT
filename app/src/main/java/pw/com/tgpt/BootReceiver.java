@@ -18,11 +18,10 @@ public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "Boot message received!");
-        // TODO: Start service that sends current price to notifications
         City.init(context.getResources());
         Context appContext = context.getApplicationContext();
-        Intent i = new Intent(appContext, PushUpdateService.class);
-        i.setAction(PushUpdateService.ACTION_UPDATE_NOTIFICATION);
+        // TODO: Push alarms to manager if enabled via preferences
+        Intent i = new Intent(PushUpdateService.ACTION_DYNAMIC_NOTIFICATION);
 
         appContext.startService(i);
     }

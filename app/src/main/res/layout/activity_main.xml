@@ -7,12 +7,12 @@
     android:orientation="vertical"
     android:id="@+id/mainLayout">
 
-    <Spinner
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <AutoCompleteTextView
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
         android:id="@+id/cities"
-        android:clickable="true"
-        android:spinnerMode="dropdown" />
+        android:dropDownHeight="fill_parent"
+        android:dropDownWidth="match_parent" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -23,10 +23,15 @@
         android:visibility="visible" />
 
     <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="20dp"
+        android:id="@+id/direction" />
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="New Text"
-        android:id="@+id/direction" />
+        android:id="@+id/textView2" />
 
     <TimePicker
         android:layout_width="wrap_content"
