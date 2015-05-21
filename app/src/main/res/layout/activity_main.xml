@@ -11,7 +11,7 @@
         android:layout_width="fill_parent"
         android:layout_height="50dp"
         android:id="@+id/cities"
-        android:dropDownHeight="fill_parent"
+        android:dropDownHeight="200dp"
         android:dropDownWidth="match_parent" />
 
     <TextView

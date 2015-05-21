@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -25,24 +26,25 @@ import java.util.concurrent.Executors;
 public class MainActivity extends Activity implements AdapterView.OnItemClickListener, TimePicker.OnTimeChangedListener {
     private static final String TAG = "MAIN";
     private City selectedCity = null;
+    private Calendar selectedTime = Calendar.getInstance();
+
     ExecutorService mExecutor = Executors.newSingleThreadExecutor();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        SharedPreferences settings = getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE);
         City.init(getResources());
+
         ArrayAdapter<City> cities = new ArrayAdapter<City>(this, R.layout.city_spinner_view);
         cities.addAll(City.getCitiesArray());
 
         AutoCompleteTextView citySelect = (AutoCompleteTextView) findViewById(R.id.cities);
         if (citySelect != null) {
-            citySelect.setAdapter(cities);
             citySelect.setThreshold(1);
             citySelect.setOnItemClickListener(this);
 
-            SharedPreferences settings = getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE);
             int cityId = settings.getInt(getResources().getString(R.string.pref_city_tgpt_id), -1);
 
             selectedCity = City.getCity(cityId);
@@ -63,10 +65,17 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
                 };
                 mExecutor.execute(updateCity);
             }
+            citySelect.setAdapter(cities);
         }
 
         TimePicker timePicker = (TimePicker) findViewById(R.id.time_picker);
         if (timePicker != null) {
+            int hour = settings.getInt(getResources().getString(R.string.pref_time_trigger_hour), -1);
+            int minute = settings.getInt(getResources().getString(R.string.pref_time_trigger_minute), -1);
+            if (hour != -1 && minute != -1) {
+                timePicker.setCurrentHour(hour);
+                timePicker.setCurrentMinute(minute);
+            }
             timePicker.setOnTimeChangedListener(this);
         }
     }
@@ -106,6 +115,10 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             editor.putString(getResources().getString(R.string.pref_city_name), selectedCity.getName());
         }
 
+        if (selectedTime != null /* && dailyNotifications*/) {
+            editor.putInt(getResources().getString(R.string.pref_time_trigger_hour), selectedTime.get(Calendar.HOUR_OF_DAY));
+            editor.putInt(getResources().getString(R.string.pref_time_trigger_minute), selectedTime.get(Calendar.MINUTE));
+        }
         editor.commit();
     }
 
@@ -133,14 +146,14 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
     @Override
     public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        calendar.set(Calendar.MINUTE, minute);
+
+        selectedTime.setTimeInMillis(System.currentTimeMillis());
+        selectedTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        selectedTime.set(Calendar.MINUTE, minute);
 
         Intent i = new Intent(getApplicationContext(), PushUpdateService.class);
         i.setAction(PushUpdateService.ACTION_CREATE_STATIC_NOTIFICATION);
-        i.putExtra(PushUpdateService.ALARM_TRIGGER_AT_MILLIS, calendar.getTimeInMillis());
+        i.putExtra(PushUpdateService.ALARM_TRIGGER_AT_MILLIS, selectedTime.getTimeInMillis());
         i.putExtra(PushUpdateService.ALARM_INTERVAL_MILLIS, AlarmManager.INTERVAL_DAY);
 
         startService(i);
@@ -164,5 +177,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         };
 
         mExecutor.execute(updateCity);
+
+        InputMethodManager in = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        in.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }
