@@ -11,13 +11,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.ListView;
-import android.widget.Spinner;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.TimePicker;
-
+import android.widget.ProgressBar;
 import java.util.Calendar;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -51,12 +49,14 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             if (selectedCity != null) {
                 citySelect.setText(selectedCity.getName());
                 final City city = selectedCity;
+                showProgressBar(true);
                 Runnable updateCity = new Runnable() {
                     @Override
                     public void run() {
                         if (city.updateTGPTData(getApplicationContext())) {
                             updatePrices(city);
                             selectedCity = city;
+                            showProgressBar(false);
                         }
                         else {
                             mExecutor.execute(this);
@@ -166,9 +166,12 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         Runnable updateCity = new Runnable() {
             @Override
             public void run() {
+                showProgressBar(true);
+
                 if (city.updateTGPTData(getApplicationContext())) {
                     updatePrices(city);
                     selectedCity = city;
+                    showProgressBar(false);
                 }
                 else {
                     mExecutor.execute(this);
@@ -179,6 +182,23 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         mExecutor.execute(updateCity);
 
         InputMethodManager in = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-        in.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        // getCurrentFocus() must come from activity: http://stackoverflow.com/a/17789187
+        View focus = getCurrentFocus();
+        if (focus != null) {
+            in.hideSoftInputFromWindow(focus.getWindowToken(), 0);
+        }
+    }
+
+    private void showProgressBar(boolean enable) {
+        final ProgressBar pBar = (ProgressBar) findViewById(R.id.progressBar);
+        final boolean en = enable;
+        if (pBar != null) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    pBar.setVisibility(en? ProgressBar.VISIBLE : ProgressBar.GONE);
+                }
+            });
+        }
     }
 }

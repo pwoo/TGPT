@@ -14,13 +14,30 @@
         android:dropDownHeight="200dp"
         android:dropDownWidth="match_parent" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text=""
-        android:id="@+id/regular_price"
-        android:visibility="visible" />
+    <GridLayout
+        android:layout_width="353dp"
+        android:layout_height="36dp"
+        android:id="@+id/progressLayout"
+        android:rowCount="1"
+        android:columnCount="2">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text=""
+            android:id="@+id/regular_price"
+            android:visibility="visible" />
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/progressBar"
+            android:layout_row="0"
+            android:layout_column="1"
+            android:indeterminate="true" />
+    </GridLayout>
 
     <TextView
         android:layout_width="fill_parent"

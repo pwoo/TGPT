@@ -10,6 +10,8 @@ import android.content.SharedPreferences;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import pw.com.tgpt.MainActivity;
+
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
  * a service on a separate handler thread.
@@ -82,10 +84,17 @@ public class PushUpdateService extends IntentService {
         n.setSmallIcon(R.mipmap.ic_launcher);
         if (savedCity != null) {
             if (savedCity.updateTGPTData(appContext)) {
+                Intent myIntent = new Intent(getApplicationContext(), MainActivity.class);
+                PendingIntent pIntent = PendingIntent.getActivity(getApplicationContext(), 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT, null);
+
                 n.setContentText(new Double(savedCity.getRegularPrice()).toString());
                 n.setContentTitle("Current gas price in " + savedCity.getName());
+                n.setContentIntent(pIntent);
+
                 NotificationManager notifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                notifyMgr.notify(NOTIFY_ID, n.build());
+                if (notifyMgr != null) {
+                    notifyMgr.notify(NOTIFY_ID, n.build());
+                }
             }
         }
     }
