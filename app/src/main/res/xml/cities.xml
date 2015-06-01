@@ -19,412 +19,200 @@
     <city id="562">Boucherville</city>
     <city id="612">Boucherville</city>
     <city id="77">Bowmanville</city>
+    <city id="401">Bracebridge-Huntsville</city>
+    <city id="536">Bradford</city>
+    <city id="346">Brampton</city>
+    <city id="623">Brampton North</city>
+    <city id="133">Brandon</city>
+    <city id="135">Brantford</city>
+    <city id="618">Bridgewater</city>
+    <city id="325">Brockville</city>
+    <city id="555">Brossard</city>
+    <city id="103">Burlington</city>
+    <city id="566">Burnaby</city>
+    <city id="342">Caledon</city>
+    <city id="119">Calgary</city>
+    <city id="105">Cambridge</city>
+    <city id="506">Campbell River</city>
+    <city id="533">Carleton Place</city>
+    <city id="573">Charlottetown</city>
+    <city id="339">Chatham</city>
+    <city id="504">Chilliwack</city>
+    <city id="570">Clarenville</city>
+    <city id="597">Clinton</city>
+    <city id="74">Cobourg</city>
+    <city id="88">Collingwood</city>
+    <city id="572">Conception Bay South</city>
+    <city id="577">Coquitlam</city>
+    <city id="525">Corner Brook</city>
+    <city id="338">Cornwall</city>
+    <city id="505">Courtenay</city>
+    <city id="78">Courtice</city>
+    <city id="588">Cranbrook</city>
+    <city id="606">Dartmouth</city>
+    <city id="513">Dauphin</city>
+    <city id="576">Delta</city>
+    <city id="601">Dorval</city>
+    <city id="490">Drummondville</city>
+    <city id="488">Dryden</city>
+    <city id="120">Edmonton</city>
+    <city id="486">Elliot Lake</city>
+    <city id="111">Etobicoke</city>
+    <city id="541">Exeter</city>
+    <city id="539">Fergus</city>
+    <city id="609">Fernie</city>
+    <city id="583">Fort Erie</city>
+    <city id="327">Fort McMurray</city>
+    <city id="499">Frederiction</city>
+    <city id="494">Ganonoque</city>
+    <city id="523">Gander</city>
+    <city id="518">Gatineau</city>
+    <city id="615">Georgetown</city>
+    <city id="531">Gloucester</city>
+    <city id="398">Goderich</city>
+    <city id="491">Granby</city>
+    <city id="501">Grand Prairie</city>
+    <city id="400">Gravenhurst</city>
+    <city id="553">Grimsby</city>
+    <city id="104">Guelph</city>
+    <city id="591">Haliburton</city>
+    <city id="496">Halifax</city>
+    <city id="594">Halton Hills</city>
+    <city id="115">Hamilton</city>
+    <city id="569">Hope</city>
+    <city id="602">Hull</city>
+    <city id="548">Ingersoll</city>
+    <city id="592">Innisfil</city>
+    <city id="121">Kamloops</city>
+    <city id="87">Kanata</city>
+    <city id="489">Kapukasing</city>
+    <city id="122">Kelowna</city>
+    <city id="517">Kemptville</city>
+    <city id="487">Kenora</city>
+    <city id="334">Keswick</city>
+    <city id="610">Kimberly</city>
+    <city id="544">Kincardine</city>
+    <city id="324">Kingston</city>
+    <city id="550">Kirkland</city>
+    <city id="10">Kitchener</city>
+    <city id="603">Lachine</city>
+    <city id="593">Lakefield</city>
+    <city id="575">Langley</city>
+    <city id="561">Lasalle</city>
+    <city id="556">Laval</city>
+    <city id="337">Leamington</city>
+    <city id="502">Lethbridge</city>
+    <city id="333">Lindsay</city>
+    <city id="546">Listowel</city>
+    <city id="509">Lloydminster</city>
+    <city id="116">London</city>
+    <city id="557">Longueuil</city>
+    <city id="611">Longueuil</city>
+    <city id="579">Maple Ridge</city>
+    <city id="134">Markham</city>
+    <city id="542">Meaford</city>
+    <city id="480">Medicine Hat</city>
+    <city id="484">Midland</city>
+    <city id="483">Milton</city>
+    <city id="584">Minden</city>
+    <city id="101">Mississauga</city>
+    <city id="587">Mitchell</city>
+    <city id="497">Moncton</city>
+    <city id="244">Montreal</city>
+    <city id="510">Moose Jaw</city>
+    <city id="507">Nanaimo</city>
+    <city id="493">Napanee</city>
+    <city id="530">Nepean</city>
+    <city id="520">New Glasgow</city>
+    <city id="585">New Hamburg</city>
+    <city id="549">New Liskeard</city>
+    <city id="522">New Westminster</city>
+    <city id="332">Newcastle</city>
+    <city id="344">Newmarket</city>
+    <city id="302">Niagara Falls</city>
+    <city id="431">North Bay</city>
+    <city id="567">North Vancouver</city>
+    <city id="102">Oakville</city>
+    <city id="96">Orangeville</city>
+    <city id="89">Orillia</city>
+    <city id="532">Orleans</city>
+    <city id="79">Oshawa</city>
+    <city id="86">Ottawa</city>
+    <city id="399">Owen Sound</city>
+    <city id="404">Parry Sound</city>
+    <city id="485">Pembroke</city>
+    <city id="589">Penticton</city>
+    <city id="515">Perth</city>
+    <city id="85">Peterborough</city>
+    <city id="82">Pickering</city>
+    <city id="554">Picton</city>
+    <city id="604">Pointe Claire</city>
+    <city id="552">Port Colborne</city>
+    <city id="545">Port Elgin</city>
+    <city id="75">Port Hope</city>
+    <city id="568">Port Moody</city>
+    <city id="620">Port Moody</city>
+    <city id="84">Port Perry</city>
+    <city id="516">Prescott</city>
+    <city id="511">Prince Albert</city>
+    <city id="500">Prince George</city>
+    <city id="482">Quebec City</city>
+    <city id="503">Red Deer</city>
+    <city id="326">Regina</city>
+    <city id="582">Renfrew</city>
+    <city id="558">Repentigny</city>
+    <city id="564">Richmond</city>
+    <city id="92">Richmond Hill</city>
+    <city id="498">Saint John</city>
+    <city id="581">Saint Marys</city>
+    <city id="563">Salaberry de Valleyfield</city>
+    <city id="305">Sarnia</city>
+    <city id="118">Saskatoon</city>
+    <city id="306">Sault St. Marie</city>
+    <city id="598">Seaforth</city>
+    <city id="519">Shawinigan</city>
+    <city id="537">Shelbourne</city>
+    <city id="492">Sherbrooke</city>
+    <city id="397">Simcoe</city>
+    <city id="534">Smiths Falls</city>
+    <city id="614">Southhampton</city>
+    <city id="341">St. Thomas</city>
+    <city id="114">St. Catharines</city>
+    <city id="524">St. John's</city>
+    <city id="514">Steinbach</city>
+    <city id="607">Stellarton</city>
+    <city id="529">Stittsville</city>
+    <city id="109">Stoney Creek</city>
+    <city id="535">Stouffville</city>
+    <city id="303">Stratford</city>
+    <city id="540">Strathroy</city>
+    <city id="307">Sudbury</city>
+    <city id="574">Summerside</city>
+    <city id="578">Surrey</city>
+    <city id="621">Surrey</city>
+    <city id="586">Sutton</city>
+    <city id="99">Thunder Bay</city>
+    <city id="547">Tillsonburg</city>
+    <city id="402">Timmins</city>
     <city id="133">Toronto</city>
-
-
-    <!--
-    562&Boucherville-Gas-Prices"
-
-    612&Boucherville-Gas-Prices"
-
-    77&Bowmanville-Gas-Prices"
-
-    401&BracebridgeHuntsville-Gas-Prices"
-
-    536&Bradford-Gas-Prices"
-
-    346&Brampton-Gas-Prices"
-
-    623&Brampton-North-Gas-Prices"
-
-    512&Brandon-Gas-Prices"
-
-    135&Brantford-Gas-Prices"
-
-    618&Bridgewater-Gas-Prices"
-
-    325&Brockville-Gas-Prices"
-
-    555&Brossard-Gas-Prices"
-
-    103&Burlington-Gas-Prices"
-
-    566&Burnaby-Gas-Prices"
-
-    619&Burnaby-Gas-Prices"
-
-    342&Caledon-Gas-Prices"
-
-    119&Calgary-Gas-Prices"
-
-    105&Cambridge-Gas-Prices"
-
-    506&Campbell-River-Gas-Prices"
-
-    533&Carleton-Place-Gas-Prices"
-
-    573&Charlottetown-Gas-Prices"
-
-    339&Chatham-Gas-Prices"
-
-    504&Chilliwack-Gas-Prices"
-
-    570&Clarenville-Gas-Prices"
-
-    597&Clinton-Gas-Prices"
-
-    74&Cobourg-Gas-Prices"
-
-    88&Collingwood-Gas-Prices"
-
-    572&Conception-Bay-South-Gas-Prices"
-
-    577&Coquitlam-Gas-Prices"
-
-    525&Corner-Brook-Gas-Prices"
-
-    338&Cornwall-Gas-Prices"
-
-    505&Courtenay-Gas-Prices"
-
-    78&Courtice-Gas-Prices"
-
-    588&Cranbrook-Gas-Prices"
-
-    606&Dartmouth-Gas-Prices"
-
-    513&Dauphin-Gas-Prices"
-
-    576&Delta-Gas-Prices"
-
-    601&Dorval-Gas-Prices"
-
-    490&Drummondville-Gas-Prices"
-
-    488&Dryden-Gas-Prices"
-
-    120&Edmonton-Gas-Prices"
-
-    486&Elliot-Lake-Gas-Prices"
-
-    111&Etobicoke-Gas-Prices"
-
-    541&Exeter-Gas-Prices"
-
-    539&Fergus-Gas-Prices"
-
-    609&Fernie-Gas-Prices"
-
-    583&Fort-Erie-Gas-Prices"
-
-    327&Fort-McMurray-Gas-Prices"
-
-    499&Fredericton-Gas-Prices"
-
-    494&Gananoque-Gas-Prices"
-
-    523&Gander-Gas-Prices"
-
-    518&Gatineau-Gas-Prices"
-
-    615&Georgetown-Gas-Prices"
-
-    531&Gloucester-Gas-Prices"
-
-    398&Goderich-Gas-Prices"
-
-    491&Granby-Gas-Prices"
-
-    501&Grande-Prairie-Gas-Prices"
-
-    400&Gravenhurst-Gas-Prices"
-
-    553&Grimsby-Gas-Prices"
-
-    104&Guelph-Gas-Prices"
-
-    591&Haliburton-Gas-Prices"
-
-    496&Halifax-Gas-Prices"
-
-    594&Halton-Hills-Gas-Prices"
-
-    115&Hamilton-Gas-Prices"
-
-    569&Hope-Gas-Prices"
-
-    602&Hull-Gas-Prices"
-
-    548&Ingersoll-Gas-Prices"
-
-    592&Innisfil-Gas-Prices"
-
-    121&Kamloops-Gas-Prices"
-
-    87&Kanata-Gas-Prices"
-
-    489&Kapuskasing-Gas-Prices"
-
-    122&Kelowna-Gas-Prices"
-
-    517&Kemptville-Gas-Prices"
-
-    487&Kenora-Gas-Prices"
-
-    334&Keswick-Gas-Prices"
-
-    610&Kimberly-Gas-Prices"
-
-    544&Kincardine-Gas-Prices"
-
-    613&Kincardine-Gas-Prices"
-
-    324&Kingston-Gas-Prices"
-
-    550&Kirkland-Lake-Gas-Prices"
-
-    106&Kitchener-Gas-Prices"
-
-    603&Lachine-Gas-Prices"
-
-    593&Lakefield-Gas-Prices"
-
-    575&Langley-Gas-Prices"
-
-    561&Lasalle-Gas-Prices"
-
-    556&Laval-Gas-Prices"
-
-    337&Leamington-Gas-Prices"
-
-    502&Lethbridge-Gas-Prices"
-
-    333&Lindsay-Gas-Prices"
-
-    546&Listowel-Gas-Prices"
-
-    509&Lloydminster-Gas-Prices"
-
-    116&London-Gas-Prices"
-
-    557&Longueuil-Gas-Prices"
-
-    611&Longueuil-Gas-Prices"
-
-    579&Maple-Ridge-Gas-Prices"
-
-    134&Markham-Gas-Prices"
-
-    542&Meaford-Gas-Prices"
-
-    480&Medicine-Hat-Gas-Prices"
-
-    484&Midland-Gas-Prices"
-
-    483&Milton-Gas-Prices"
-
-    584&Minden-Gas-Prices"
-
-    101&Mississauga-Gas-Prices"
-
-    587&Mitchell-Gas-Prices"
-
-    497&Moncton-Gas-Prices"
-
-    244&Montreal-Gas-Prices"
-
-    510&Moose-Jaw-Gas-Prices"
-
-    507&Nanaimo-Gas-Prices"
-
-    493&Napanee-Gas-Prices"
-
-    530&Nepean-Gas-Prices"
-
-    520&New-Glasgow-Gas-Prices"
-
-    585&New-Hamburg-Gas-Prices"
-
-    549&New-Liskeard-Gas-Prices"
-
-    622&New-Westminster-Gas-Prices"
-
-    332&Newcastle-Gas-Prices"
-
-    344&Newmarket-Gas-Prices"
-
-    302&Niagara-Falls-Gas-Prices"
-
-    431&North-Bay-Gas-Prices"
-
-    567&North-Vancouver-Gas-Prices"
-
-    102&Oakville-Gas-Prices"
-
-    96&Orangeville-Gas-Prices"
-
-    89&Orillia-Gas-Prices"
-
-    532&Orleans-Gas-Prices"
-
-    79&Oshawa-Gas-Prices"
-
-    86&Ottawa-Gas-Prices"
-
-    399&Owen-Sound-Gas-Prices"
-
-    404&Parry-Sound-Gas-Prices"
-
-    485&Pembroke-Gas-Prices"
-
-    589&Penticton-Gas-Prices"
-
-    515&Perth-Gas-Prices"
-
-    85&Peterborough-Gas-Prices"
-
-    82&Pickering-Gas-Prices"
-
-    554&Picton-Gas-Prices"
-
-    604&Pointe-claire-Gas-Prices"
-
-    552&Port-Colborne-Gas-Prices"
-
-    545&Port-Elgin-Gas-Prices"
-
-    75&Port-Hope-Gas-Prices"
-
-    568&Port-Moody-Gas-Prices"
-
-    620&Port-Moody-Gas-Prices"
-
-    84&Port-Perry-Gas-Prices"
-
-    516&Prescott-Gas-Prices"
-
-    511&Prince-Albert-Gas-Prices"
-
-    500&Prince-George-BC-Gas-Prices"
-
-    482&Quebec-City-Gas-Prices"
-
-    503&Red-Deer-Gas-Prices"
-
-    326&Regina-Gas-Prices"
-
-    582&Renfrew-Gas-Prices"
-
-    558&Repentigny-Gas-Prices"
-
-    564&Richmond-Gas-Prices"
-
-    92&Richmond-Hill-Gas-Prices"
-
-    498&Saint-John-NB-Gas-Prices"
-
-    581&Saint-Marys-Gas-Prices"
-
-    563&Salaberry-de-valleyfield-Gas-Prices"
-
-    305&Sarnia-Gas-Prices"
-
-    118&Saskatoon-Gas-Prices"
-
-    306&Sault-Ste-Marie-Gas-Prices"
-
-    598&Seaforth-Gas-Prices"
-
-    519&Shawinigan-Gas-Prices"
-
-    537&Shelburne-Gas-Prices"
-
-    492&Sherbrooke-Gas-Prices"
-
-    397&Simcoe-Gas-Prices"
-
-    534&Smiths-Falls-Gas-Prices"
-
-    614&Southampton-Gas-Prices"
-
-    341&St-Thomas-Gas-Prices"
-
-    114&St.-Catharines-Gas-Prices"
-
-    524&St.-John's-Gas-Prices"
-
-    514&Steinbach-Gas-Prices"
-
-    607&Stellarton-Gas-Prices"
-
-    529&Stittsville-Gas-Prices"
-
-    109&Stoney-Creek-Gas-Prices"
-
-    535&Stouffville-Gas-Prices"
-
-    303&Stratford-Gas-Prices"
-
-    540&Strathroy-Gas-Prices"
-
-    307&Sudbury-Gas-Prices"
-
-    574&Summerside-Gas-Prices"
-
-    578&Surrey-Gas-Prices"
-
-    621&Surrey-Gas-Prices"
-
-    586&Sutton-Gas-Prices"
-
-    522&Sydney-Gas-Prices"
-
-    99&Thunder-Bay-Gas-Prices"
-
-    547&Tillsonburg-Gas-Prices"
-
-    402&Timmins-Gas-Prices"
-
-    133&Toronto-Gas-Prices"
-
-    538&Tottenham-Gas-Prices"
-
-    322&Trenton-Gas-Prices"
-
-    608&Truro-Gas-Prices"
-
-    83&Uxbridge-Gas-Prices"
-
-    123&Vancouver-Gas-Prices"
-
-    560&Vaudreuil-Dorion-Gas-Prices"
-
-    343&Vaughan-Gas-Prices"
-
-    624&Vaughan-North-Gas-Prices"
-
-    481&Victoria-Gas-Prices"
-
-    107&Waterloo-Gas-Prices"
-
-    551&Welland-Gas-Prices"
-
-    80&Whitby-Gas-Prices"
-
-    565&White-Rock-Gas-Prices"
-
-    304&Windsor-Gas-Prices"
-
-    599&Wingham-Gas-Prices"
-
-    117&Winnipeg-Gas-Prices"
-
-    616&Woodbridge-Gas-Prices"
-
-    340&Woodstock-Gas-Prices"
-
-    521&Yarmouth-Gas-Prices"
-
-    571&Yellowknife-Gas-Prices"
-    -->
+    <city id="538">Tottenham</city>
+    <city id="322">Trenton</city>
+    <city id="608">Truro</city>
+    <city id="83">Uxbridge</city>
+    <city id="123">Vancouver</city>
+    <city id="560">Vaudreuil Dorion</city>
+    <city id="343">Vaughn</city>
+    <city id="624">Vaughn North</city>
+    <city id="481">Victoria</city>
+    <city id="107">Waterloo</city>
+    <city id="551">Welland</city>
+    <city id="80">Whitby</city>
+    <city id="565">White Rock</city>
+    <city id="304">Windsor</city>
+    <city id="599">Wingham</city>
+    <city id="117">Winnipeg</city>
+    <city id="616">Woodbridge</city>
+    <city id="340">Woodstock</city>
+    <city id="521">Yarmouth</city>
+    <city id="571">Yellowknife</city>
 </cities>
