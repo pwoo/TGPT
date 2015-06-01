@@ -157,8 +157,7 @@ public class City {
         result.trimToSize();
 
         JSONObject parser = new JSONObject(result.toString());
-        parser = parser.getJSONObject(appContext.getString(R.string.tgpt_channel));
-        parser = parser.getJSONObject(appContext.getString(R.string.tgpt_item));
+        parser = parser.getJSONObject(appContext.getString(R.string.tgpt_channel)).getJSONObject(appContext.getString(R.string.tgpt_item));
 
         setRegularPrice(parser.getDouble(appContext.getString(R.string.tgpt_regular_price)));
         setRegularDiff(parser.getDouble(appContext.getString(R.string.tgpt_regular_diff)));

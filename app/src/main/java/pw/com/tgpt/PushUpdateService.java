@@ -76,16 +76,15 @@ public class PushUpdateService extends IntentService {
         Log.v(TAG, "handleActionUpdate(" + action + ")");
 
         SharedPreferences settings = getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE);
-        final Context appContext = this.getApplicationContext();
         int cityId = settings.getInt("pcityid", -1);
         final City savedCity = City.getCity(cityId);
 
-        NotificationCompat.Builder n = new NotificationCompat.Builder(appContext);
+        NotificationCompat.Builder n = new NotificationCompat.Builder(this);
         n.setSmallIcon(R.mipmap.ic_launcher);
         if (savedCity != null) {
-            if (savedCity.updateTGPTData(appContext)) {
-                Intent myIntent = new Intent(getApplicationContext(), MainActivity.class);
-                PendingIntent pIntent = PendingIntent.getActivity(getApplicationContext(), 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT, null);
+            if (savedCity.updateTGPTData(this)) {
+                Intent myIntent = new Intent(this, MainActivity.class);
+                PendingIntent pIntent = PendingIntent.getActivity(this, 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT, null);
 
                 n.setContentText(new Double(savedCity.getRegularPrice()).toString());
                 n.setContentTitle("Current gas price in " + savedCity.getName());

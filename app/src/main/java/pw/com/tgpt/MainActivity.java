@@ -2,6 +2,7 @@ package pw.com.tgpt;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -49,11 +50,12 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             if (selectedCity != null) {
                 citySelect.setText(selectedCity.getName());
                 final City city = selectedCity;
+                final Context activityContext = this;
                 showProgressBar(true);
                 Runnable updateCity = new Runnable() {
                     @Override
                     public void run() {
-                        if (city.updateTGPTData(getApplicationContext())) {
+                        if (city.updateTGPTData(activityContext)) {
                             updatePrices(city);
                             selectedCity = city;
                             showProgressBar(false);
@@ -151,7 +153,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         selectedTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
         selectedTime.set(Calendar.MINUTE, minute);
 
-        Intent i = new Intent(getApplicationContext(), PushUpdateService.class);
+        Intent i = new Intent(this, PushUpdateService.class);
         i.setAction(PushUpdateService.ACTION_CREATE_STATIC_NOTIFICATION);
         i.putExtra(PushUpdateService.ALARM_TRIGGER_AT_MILLIS, selectedTime.getTimeInMillis());
         i.putExtra(PushUpdateService.ALARM_INTERVAL_MILLIS, AlarmManager.INTERVAL_DAY);
@@ -162,13 +164,15 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
+        final Context activityContext = this;
         final City city = (City) parent.getAdapter().getItem(pos);
+
         Runnable updateCity = new Runnable() {
             @Override
             public void run() {
                 showProgressBar(true);
 
-                if (city.updateTGPTData(getApplicationContext())) {
+                if (city.updateTGPTData(activityContext)) {
                     updatePrices(city);
                     selectedCity = city;
                     showProgressBar(false);
