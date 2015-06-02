@@ -48,6 +48,12 @@
         android:text="Notify on Update"
         android:id="@+id/dynamic_update" />
 
+    <CheckBox
+        android:layout_width="185dp"
+        android:layout_height="wrap_content"
+        android:text="Daily Update"
+        android:id="@+id/daily_update" />
+
     <TimePicker
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

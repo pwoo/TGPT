@@ -94,11 +94,20 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             dynamicUpdateCB.setChecked(checked);
             dynamicUpdateCB.setOnCheckedChangeListener(this);
         }
+
+        CheckBox dailyUpdateCB = (CheckBox) findViewById(R.id.daily_update);
+        if (dailyUpdateCB != null) {
+            boolean checked = settings.getBoolean(getResources().getString(R.string.pref_daily_update), false);
+            dailyUpdateCB.setChecked(checked);
+            dailyUpdateCB.setOnCheckedChangeListener(this);
+            if (timePicker != null) {
+                timePicker.setEnabled(dailyUpdateCB.isChecked());
+            }
+        }
     }
 
     private void updateDynamicAlarm(boolean enable) {
-        Intent i = new Intent();
-        i.setClass(this, PushUpdateService.class);
+        Intent i = new Intent(this, PushUpdateService.class);
         if (enable) {
             i.setAction(PushUpdateService.ACTION_CREATE_DYNAMIC_NOTIFICATION);
             i.putExtra(PushUpdateService.ALARM_TRIGGER_AT_MILLIS, System.currentTimeMillis() + AlarmManager.INTERVAL_FIFTEEN_MINUTES);
@@ -106,6 +115,19 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         }
         else {
             i.setAction(PushUpdateService.ACTION_CANCEL_DYNAMIC_NOTIFICATION);
+        }
+        startService(i);
+    }
+
+    private void updateDailyAlarm(boolean enable) {
+        Intent i = new Intent(this, PushUpdateService.class);
+        if (enable) {
+            i.setAction(PushUpdateService.ACTION_CREATE_STATIC_NOTIFICATION);
+            i.putExtra(PushUpdateService.ALARM_TRIGGER_AT_MILLIS, selectedTime.getTimeInMillis());
+            i.putExtra(PushUpdateService.ALARM_INTERVAL_MILLIS, AlarmManager.INTERVAL_DAY);
+        }
+        else {
+            i.setAction(PushUpdateService.ACTION_CANCEL_STATIC_NOTIFICATION);
         }
         startService(i);
     }
@@ -139,6 +161,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         SharedPreferences.Editor editor = settings.edit();
         AutoCompleteTextView citySelect = (AutoCompleteTextView) findViewById(R.id.cities);
         CheckBox dynamicUpdateCB = (CheckBox) findViewById(R.id.dynamic_update);
+        CheckBox dailyUpdateCB = (CheckBox) findViewById(R.id.daily_update);
 
         if (selectedCity != null) {
             editor.putInt(getResources().getString(R.string.pref_city_tgpt_id), selectedCity.getID());
@@ -152,6 +175,10 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
         if (dynamicUpdateCB != null) {
             editor.putBoolean(getResources().getString(R.string.pref_dynamic_update), dynamicUpdateCB.isChecked());
+        }
+
+        if (dailyUpdateCB != null) {
+            editor.putBoolean(getResources().getString(R.string.pref_daily_update), dailyUpdateCB.isChecked());
         }
 
         editor.commit();
@@ -184,12 +211,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         selectedTime.set(Calendar.HOUR, hourOfDay);
         selectedTime.set(Calendar.MINUTE, minute);
 
-        Intent i = new Intent(this, PushUpdateService.class);
-        i.setAction(PushUpdateService.ACTION_CREATE_STATIC_NOTIFICATION);
-        i.putExtra(PushUpdateService.ALARM_TRIGGER_AT_MILLIS, selectedTime.getTimeInMillis());
-        i.putExtra(PushUpdateService.ALARM_INTERVAL_MILLIS, AlarmManager.INTERVAL_DAY);
+        updateDailyAlarm(true);
 
-        startService(i);
         Log.v(TAG, "Update notification set to " + hourOfDay + ":" + minute);
     }
 
@@ -238,6 +261,17 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-       updateDynamicAlarm(isChecked);
+       switch (buttonView.getId()) {
+           case R.id.daily_update:
+               TimePicker timePicker = (TimePicker) findViewById(R.id.time_picker);
+               if (timePicker != null) {
+                   timePicker.setEnabled(isChecked);
+               }
+               updateDailyAlarm(isChecked);
+               break;
+           case R.id.dynamic_update:
+               updateDynamicAlarm(isChecked);
+               break;
+       }
     }
 }
