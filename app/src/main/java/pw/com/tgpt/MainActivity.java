@@ -75,7 +75,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         }
 
         Calendar tempCalendar = Calendar.getInstance();
-        int hour = settings.getInt(getResources().getString(R.string.pref_time_trigger_hour), tempCalendar.get(Calendar.HOUR));
+        int hour = settings.getInt(getResources().getString(R.string.pref_time_trigger_hour), tempCalendar.get(Calendar.HOUR_OF_DAY));
         int minute = settings.getInt(getResources().getString(R.string.pref_time_trigger_minute), tempCalendar.get(Calendar.MINUTE));
         TimePicker timePicker = (TimePicker) findViewById(R.id.time_picker);
         if (timePicker != null) {
@@ -85,7 +85,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
             timePicker.setOnTimeChangedListener(this);
         }
-        selectedTime.set(Calendar.HOUR, hour);
+        selectedTime.set(Calendar.HOUR_OF_DAY, hour);
         selectedTime.set(Calendar.MINUTE, minute);
 
         CheckBox dynamicUpdateCB = (CheckBox) findViewById(R.id.dynamic_update);
@@ -122,7 +122,15 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     private void updateDailyAlarm(boolean enable) {
         Intent i = new Intent(this, PushUpdateService.class);
         if (enable) {
+            Calendar tempCalendar = Calendar.getInstance();
             i.setAction(PushUpdateService.ACTION_CREATE_STATIC_NOTIFICATION);
+            // Prevent the notification from triggering right away if the selectedTime has passed already.
+            selectedTime.set(Calendar.DAY_OF_WEEK, tempCalendar.get(Calendar.DAY_OF_WEEK));
+            if (tempCalendar.after(selectedTime)) {
+                selectedTime.add(Calendar.DAY_OF_WEEK, 1);
+            }
+            Log.v(TAG, "Next daily alarm set to " + selectedTime.toString());
+
             i.putExtra(PushUpdateService.ALARM_TRIGGER_AT_MILLIS, selectedTime.getTimeInMillis());
             i.putExtra(PushUpdateService.ALARM_INTERVAL_MILLIS, AlarmManager.INTERVAL_DAY);
         }
@@ -147,7 +155,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
                 }
                 text.append(c.getDirection().toString().toUpperCase());
                 text.append("\nLast update: ");
-                text.append(DateFormat.getDateInstance().format(c.getLastUpdate()));
+                text.append(DateFormat.getDateInstance().format(c.getLastUpdate().getTime()));
 
                 view.setText(text.toString());
             }
@@ -169,7 +177,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         }
 
         if (selectedTime != null /* && dailyNotifications*/) {
-            editor.putInt(getResources().getString(R.string.pref_time_trigger_hour), selectedTime.get(Calendar.HOUR));
+            editor.putInt(getResources().getString(R.string.pref_time_trigger_hour), selectedTime.get(Calendar.HOUR_OF_DAY));
             editor.putInt(getResources().getString(R.string.pref_time_trigger_minute), selectedTime.get(Calendar.MINUTE));
         }
 
@@ -208,7 +216,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
     @Override
     public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
-        selectedTime.set(Calendar.HOUR, hourOfDay);
+        selectedTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
         selectedTime.set(Calendar.MINUTE, minute);
 
         updateDailyAlarm(true);
@@ -253,7 +261,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    pBar.setVisibility(en? ProgressBar.VISIBLE : ProgressBar.GONE);
+                    pBar.setVisibility(en ? ProgressBar.VISIBLE : ProgressBar.GONE);
                 }
             });
         }

@@ -19,6 +19,7 @@ import java.net.URLConnection;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -35,8 +36,8 @@ public class City {
     private double lastMonthRegular;
     private double lastYearRegular;
     private Direction direction;
-    private Date currentDate;
-    private Date lastUpdate;
+    private Calendar currentDate;
+    private Calendar lastUpdate;
 
     public enum Direction {
         UP("up"),
@@ -88,7 +89,6 @@ public class City {
     protected City(int id, String name) {
         this.id = id;
         this.name = name;
-        currentDate = new Date();
     }
 
     private static ArrayList<City> generateCities(XmlResourceParser parser) {
@@ -147,6 +147,7 @@ public class City {
                 in = new BufferedInputStream(urlConnection.getInputStream());
 
                 readJSON(in, appContext);
+                currentDate = Calendar.getInstance();
                 res = true;
             } catch (NullPointerException | IOException | JSONException e) {
                 res = false;
@@ -192,9 +193,11 @@ public class City {
         SimpleDateFormat formatter = new SimpleDateFormat("cccc, MMMM d, yyyy");
         temp = parser.getString("title");
         if (!temp.isEmpty()) {
-            Date lastUpdate = formatter.parse(temp, new ParsePosition(0));
-            if (lastUpdate != null) {
-                setLastUpdate(lastUpdate);
+            Date lastUpdateDate = formatter.parse(temp, new ParsePosition(0));
+            if (lastUpdateDate != null) {
+                if (lastUpdate == null)
+                    lastUpdate = Calendar.getInstance();
+                lastUpdate.setTime(lastUpdateDate);
             }
         }
     }
@@ -274,9 +277,9 @@ public class City {
         this.direction = direction;
     }
 
-    public void setLastUpdate(Date update) { lastUpdate = update; }
+    public void setLastUpdate(Calendar update) { lastUpdate = update; }
 
-    public Date getLastUpdate() { return lastUpdate; }
+    public Calendar getLastUpdate() { return lastUpdate; }
 
-    public Date getCurrentDate() { return currentDate; }
+    public Calendar getCurrentDate() { return currentDate; }
 }
