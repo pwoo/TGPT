@@ -16,7 +16,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by PW on 2015-04-26.
@@ -32,11 +35,22 @@ public class City {
     private double lastMonthRegular;
     private double lastYearRegular;
     private Direction direction;
+    private Date currentDate;
+    private Date lastUpdate;
 
     public enum Direction {
-        UP,
-        DOWN,
-        NO_CHANGE
+        UP("up"),
+        DOWN("down"),
+        NO_CHANGE("no change");
+
+        private final String desc;
+        private Direction(String value) {
+            desc = value;
+        }
+
+        public String toString() {
+            return desc;
+        }
     }
 
     public static void init(Resources r) {
@@ -68,12 +82,13 @@ public class City {
         return null;
     }
 
-    public City() {
+    private City() {
     }
 
-    public City(int id, String name) {
+    protected City(int id, String name) {
         this.id = id;
         this.name = name;
+        currentDate = new Date();
     }
 
     private static ArrayList<City> generateCities(XmlResourceParser parser) {
@@ -162,16 +177,26 @@ public class City {
         setRegularPrice(parser.getDouble(appContext.getString(R.string.tgpt_regular_price)));
         setRegularDiff(parser.getDouble(appContext.getString(R.string.tgpt_regular_diff)));
         setLastWeekRegular(parser.getDouble(appContext.getString(R.string.tgpt_last_week_regular)));
-        String tempDirection = parser.getString("regulardirection");
+
+        String temp = parser.getString("regulardirection");
         Direction direction = Direction.NO_CHANGE;
-        if (tempDirection.equals("+")) {
+        if (temp.equals("+")) {
             direction = Direction.UP;
         }
-        else if (tempDirection.equals("-")) {
+        else if (temp.equals("-")) {
             direction = Direction.DOWN;
         }
 
         setDirection(direction);
+
+        SimpleDateFormat formatter = new SimpleDateFormat("cccc, MMMM d, yyyy");
+        temp = parser.getString("title");
+        if (!temp.isEmpty()) {
+            Date lastUpdate = formatter.parse(temp, new ParsePosition(0));
+            if (lastUpdate != null) {
+                setLastUpdate(lastUpdate);
+            }
+        }
     }
 
     public void setID(int id) {
@@ -248,4 +273,10 @@ public class City {
     public void setDirection(Direction direction) {
         this.direction = direction;
     }
+
+    public void setLastUpdate(Date update) { lastUpdate = update; }
+
+    public Date getLastUpdate() { return lastUpdate; }
+
+    public Date getCurrentDate() { return currentDate; }
 }

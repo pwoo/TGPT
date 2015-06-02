@@ -10,15 +10,6 @@ import android.content.SharedPreferences;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import pw.com.tgpt.MainActivity;
-
-/**
- * An {@link IntentService} subclass for handling asynchronous task requests in
- * a service on a separate handler thread.
- * <p/>
- * TODO: Customize class - update intent actions, extra parameters and static
- * helper methods.
- */
 public class PushUpdateService extends IntentService {
     private static final String TAG = "PUSH";
     public static final String ACTION_CREATE_STATIC_NOTIFICATION = "pw.com.tgpt.action.CREATE_STATIC_NOTIFICATION";
@@ -51,6 +42,12 @@ public class PushUpdateService extends IntentService {
         super.onDestroy();
     }
 
+    /**
+     *
+     * @param action
+     * @param triggerAtMillis
+     * @param intervalAtMillis
+     */
     private void handleActionCreate(String action, long triggerAtMillis, long intervalAtMillis) {
         Log.v(TAG, "handleActionCreate(" + action + ")");
 
@@ -62,7 +59,10 @@ public class PushUpdateService extends IntentService {
                 AlarmManager.INTERVAL_HALF_HOUR, alarmIntent);
     }
 
-    // TODO
+    /**
+     *
+     * @param action
+     */
     private void handleActionCancel(String action) {
         Log.v(TAG, "handleActionCancel(" + action + ")");
 
@@ -72,6 +72,10 @@ public class PushUpdateService extends IntentService {
         PendingIntent alarmIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
+    /**
+     *
+     * @param action
+     */
     private void handleActionUpdate(String action) {
         Log.v(TAG, "handleActionUpdate(" + action + ")");
 
@@ -79,20 +83,32 @@ public class PushUpdateService extends IntentService {
         int cityId = settings.getInt("pcityid", -1);
         final City savedCity = City.getCity(cityId);
 
-        NotificationCompat.Builder n = new NotificationCompat.Builder(this);
-        n.setSmallIcon(R.mipmap.ic_launcher);
         if (savedCity != null) {
             if (savedCity.updateTGPTData(this)) {
-                Intent myIntent = new Intent(this, MainActivity.class);
-                PendingIntent pIntent = PendingIntent.getActivity(this, 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT, null);
+                boolean sendNotification = false;
+                if (action.equals(ACTION_STATIC_NOTIFICATION))
+                    sendNotification = true;
+                else if (action.equals(ACTION_DYNAMIC_NOTIFICATION))
+                {
+                    if (savedCity.getLastUpdate() != null && savedCity.getLastUpdate().after(savedCity.getCurrentDate())) {
+                        sendNotification = true;
+                    }
+                }
 
-                n.setContentText(new Double(savedCity.getRegularPrice()).toString());
-                n.setContentTitle("Current gas price in " + savedCity.getName());
-                n.setContentIntent(pIntent);
+                if (sendNotification) {
+                    Intent myIntent = new Intent(this, MainActivity.class);
+                    PendingIntent pIntent = PendingIntent.getActivity(this, 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT, null);
 
-                NotificationManager notifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                if (notifyMgr != null) {
-                    notifyMgr.notify(NOTIFY_ID, n.build());
+                    NotificationCompat.Builder n = new NotificationCompat.Builder(this);
+                    n.setContentText(new Double(savedCity.getRegularPrice()).toString());
+                    n.setContentTitle("Current gas price in " + savedCity.getName());
+                    n.setContentIntent(pIntent);
+                    n.setSmallIcon(R.mipmap.ic_launcher);
+
+                    NotificationManager notifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                    if (notifyMgr != null) {
+                        notifyMgr.notify(NOTIFY_ID, n.build());
+                    }
                 }
             }
         }

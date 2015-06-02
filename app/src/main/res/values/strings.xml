@@ -14,4 +14,5 @@
     <string name="pref_city_tgpt_id">pcityid</string>
     <string name="pref_time_trigger_hour">ptimehour</string>
     <string name="pref_time_trigger_minute">ptimeminute</string>
+    <string name="pref_dynamic_update">pdynamic</string>
 </resources>

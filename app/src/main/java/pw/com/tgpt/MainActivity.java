@@ -12,17 +12,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.ProgressBar;
+
+import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-public class MainActivity extends Activity implements AdapterView.OnItemClickListener, TimePicker.OnTimeChangedListener {
+public class MainActivity extends Activity implements AdapterView.OnItemClickListener, TimePicker.OnTimeChangedListener, CompoundButton.OnCheckedChangeListener {
     private static final String TAG = "MAIN";
     private City selectedCity = null;
     private Calendar selectedTime = Calendar.getInstance();
@@ -70,24 +74,35 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             citySelect.setAdapter(cities);
         }
 
+        Calendar tempCalendar = Calendar.getInstance();
+        int hour = settings.getInt(getResources().getString(R.string.pref_time_trigger_hour), tempCalendar.get(Calendar.HOUR));
+        int minute = settings.getInt(getResources().getString(R.string.pref_time_trigger_minute), tempCalendar.get(Calendar.MINUTE));
         TimePicker timePicker = (TimePicker) findViewById(R.id.time_picker);
         if (timePicker != null) {
-            int hour = settings.getInt(getResources().getString(R.string.pref_time_trigger_hour), -1);
-            int minute = settings.getInt(getResources().getString(R.string.pref_time_trigger_minute), -1);
-            if (hour != -1 && minute != -1) {
-                timePicker.setCurrentHour(hour);
-                timePicker.setCurrentMinute(minute);
-            }
+            timePicker.setIs24HourView(false);
+            timePicker.setCurrentHour(hour);
+            timePicker.setCurrentMinute(minute);
+
             timePicker.setOnTimeChangedListener(this);
+        }
+        selectedTime.set(Calendar.HOUR, hour);
+        selectedTime.set(Calendar.MINUTE, minute);
+
+        CheckBox dynamicUpdateCB = (CheckBox) findViewById(R.id.dynamic_update);
+        if (dynamicUpdateCB != null) {
+            boolean checked = settings.getBoolean(getResources().getString(R.string.pref_dynamic_update), false);
+            dynamicUpdateCB.setChecked(checked);
+            dynamicUpdateCB.setOnCheckedChangeListener(this);
         }
     }
 
     private void updateDynamicAlarm(boolean enable) {
         Intent i = new Intent();
+        i.setClass(this, PushUpdateService.class);
         if (enable) {
             i.setAction(PushUpdateService.ACTION_CREATE_DYNAMIC_NOTIFICATION);
             i.putExtra(PushUpdateService.ALARM_TRIGGER_AT_MILLIS, System.currentTimeMillis() + AlarmManager.INTERVAL_FIFTEEN_MINUTES);
-            i.putExtra(PushUpdateService.ALARM_INTERVAL_MILLIS, AlarmManager.INTERVAL_FIFTEEN_MINUTES);
+            i.putExtra(PushUpdateService.ALARM_INTERVAL_MILLIS, AlarmManager.INTERVAL_HALF_HOUR);
         }
         else {
             i.setAction(PushUpdateService.ACTION_CANCEL_DYNAMIC_NOTIFICATION);
@@ -101,7 +116,18 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             @Override
             public void run() {
                 TextView view = (TextView) findViewById(R.id.regular_price);
-                view.setText("Regular Price: " + c.getRegularPrice());
+                StringBuffer text = new StringBuffer();
+                text.append("Regular Price: ");
+                text.append(c.getRegularPrice());
+                text.append(", ");
+                if (c.getDirection() != City.Direction.NO_CHANGE) {
+                    text.append("going ");
+                }
+                text.append(c.getDirection().toString().toUpperCase());
+                text.append("\nLast update: ");
+                text.append(DateFormat.getDateInstance().format(c.getLastUpdate()));
+
+                view.setText(text.toString());
             }
         });
     }
@@ -112,15 +138,22 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         SharedPreferences settings = getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
         AutoCompleteTextView citySelect = (AutoCompleteTextView) findViewById(R.id.cities);
+        CheckBox dynamicUpdateCB = (CheckBox) findViewById(R.id.dynamic_update);
+
         if (selectedCity != null) {
             editor.putInt(getResources().getString(R.string.pref_city_tgpt_id), selectedCity.getID());
             editor.putString(getResources().getString(R.string.pref_city_name), selectedCity.getName());
         }
 
         if (selectedTime != null /* && dailyNotifications*/) {
-            editor.putInt(getResources().getString(R.string.pref_time_trigger_hour), selectedTime.get(Calendar.HOUR_OF_DAY));
+            editor.putInt(getResources().getString(R.string.pref_time_trigger_hour), selectedTime.get(Calendar.HOUR));
             editor.putInt(getResources().getString(R.string.pref_time_trigger_minute), selectedTime.get(Calendar.MINUTE));
         }
+
+        if (dynamicUpdateCB != null) {
+            editor.putBoolean(getResources().getString(R.string.pref_dynamic_update), dynamicUpdateCB.isChecked());
+        }
+
         editor.commit();
     }
 
@@ -148,9 +181,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
     @Override
     public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
-
-        selectedTime.setTimeInMillis(System.currentTimeMillis());
-        selectedTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        selectedTime.set(Calendar.HOUR, hourOfDay);
         selectedTime.set(Calendar.MINUTE, minute);
 
         Intent i = new Intent(this, PushUpdateService.class);
@@ -171,7 +202,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
             @Override
             public void run() {
                 showProgressBar(true);
-
                 if (city.updateTGPTData(activityContext)) {
                     updatePrices(city);
                     selectedCity = city;
@@ -204,5 +234,10 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
                 }
             });
         }
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+       updateDynamicAlarm(isChecked);
     }
 }
