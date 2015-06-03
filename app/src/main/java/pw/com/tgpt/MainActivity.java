@@ -80,6 +80,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         TimePicker timePicker = (TimePicker) findViewById(R.id.time_picker);
         if (timePicker != null) {
             timePicker.setIs24HourView(false);
+
             timePicker.setCurrentHour(hour);
             timePicker.setCurrentMinute(minute);
 

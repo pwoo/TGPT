@@ -69,7 +69,7 @@ public class PushUpdateService extends IntentService {
         }
 
         PendingIntent alarmIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, triggerAtMillis,
+        alarmMgr.setInexactRepeating(AlarmManager.RTC, triggerAtMillis,
                 intervalAtMillis, alarmIntent);
     }
 
@@ -138,13 +138,15 @@ public class PushUpdateService extends IntentService {
                     title.append("gas price in ").append(savedCity.getName());
 
                     n.setContentTitle(title.toString());
+                    n.setColor(getResources().getColor(R.color.dodger_blue));
 
                     // Create content text
-                    StringBuilder text = new StringBuilder(new Double(savedCity.getRegularPrice()).toString());
+                    StringBuilder text = new StringBuilder("Price is ");
+                    text.append(new Double(savedCity.getRegularPrice()).toString());
                     text.append(", ");
                     if (savedCity.getDirection() != City.Direction.NO_CHANGE) {
                         text.append("going ");
-                        text.append(savedCity.getDirection().toString());
+                        text.append(savedCity.getDirection().toString().toLowerCase());
                         text.append(" ");
                         text.append(savedCity.getRegularDiff());
                         text.append(" cents");
@@ -156,17 +158,7 @@ public class PushUpdateService extends IntentService {
                     n.setContentText(text.toString());
 
                     n.setContentIntent(pIntent);
-                    switch (savedCity.getDirection()) {
-                        case UP:
-                            n.setSmallIcon(R.drawable.fuel_up);
-                            break;
-                        case DOWN:
-                            n.setSmallIcon(R.drawable.fuel_down);
-                            break;
-                        case NO_CHANGE:
-                            n.setSmallIcon(R.drawable.fuel_nc);
-                            break;
-                    }
+                    n.setSmallIcon(R.drawable.fuel);
 
                     NotificationManager notifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                     if (notifyMgr != null) {
