@@ -165,15 +165,18 @@ public class PushUpdateService extends IntentService {
                     NotificationManager notifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                     if (notifyMgr != null) {
                         notifyMgr.notify(NOTIFY_ID, n.build());
+                        Log.v(TAG, "Notification sent!");
                     }
 
                     // Recreate pending intent with last notification time
-                    Intent updateIntent = new Intent(this, PushUpdateService.class);
 
-                    updateIntent.setAction(createAction);
-                    updateIntent.putExtras(intent.getExtras());
-                    updateIntent.putExtra(ALARM_LAST_NOTIFY, savedCity.getLastUpdate());
-                    startService(updateIntent);
+                    if (action.equals(ACTION_DYNAMIC_NOTIFICATION)) {
+                        Intent updateIntent = new Intent(this, PushUpdateService.class);
+                        updateIntent.setAction(createAction);
+                        updateIntent.putExtras(intent.getExtras());
+                        updateIntent.putExtra(ALARM_LAST_NOTIFY, savedCity.getLastUpdate());
+                        startService(updateIntent);
+                    }
                 }
             }
         }

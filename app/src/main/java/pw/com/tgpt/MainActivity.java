@@ -43,6 +43,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         ArrayAdapter<City> cities = new ArrayAdapter<City>(this, R.layout.city_spinner_view);
         cities.addAll(City.getCitiesArray());
 
+        showProgressBar(false);
         AutoCompleteTextView citySelect = (AutoCompleteTextView) findViewById(R.id.cities);
         if (citySelect != null) {
             citySelect.setThreshold(1);
