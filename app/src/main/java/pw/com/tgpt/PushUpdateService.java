@@ -11,7 +11,6 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import java.util.Calendar;
-import java.util.Date;
 
 public class PushUpdateService extends IntentService {
     private static final String TAG = "PUSH";
@@ -46,7 +45,6 @@ public class PushUpdateService extends IntentService {
         super.onDestroy();
     }
 
-
     private void handleActionCreate(String action, long triggerAtMillis, long intervalAtMillis) {
         handleActionCreate(action, triggerAtMillis, intervalAtMillis, null);
     }
@@ -57,7 +55,7 @@ public class PushUpdateService extends IntentService {
      * @param triggerAtMillis
      * @param intervalAtMillis
      */
-    private void handleActionCreate(String action, long triggerAtMillis, long intervalAtMillis, Date lastNotify) {
+    private void handleActionCreate(String action, long triggerAtMillis, long intervalAtMillis, Calendar lastNotify) {
         Log.v(TAG, "handleActionCreate(" + action + ")");
 
         AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -90,7 +88,7 @@ public class PushUpdateService extends IntentService {
 
     /**
      *
-     * @param action
+     * @param intent
      */
     private void handleActionUpdate(Intent intent) {
         String action = intent.getAction();
@@ -121,11 +119,15 @@ public class PushUpdateService extends IntentService {
                     Calendar lastDate = (Calendar) intent.getSerializableExtra(ALARM_LAST_NOTIFY);
                     if (lastDate != null) {
                         if (savedCity.getLastUpdate().after(lastDate)) {
+                            Log.v(TAG, "savedCity: " + savedCity.getLastUpdate().toString());
+                            Log.v(TAG, "lastDate: " + lastDate.toString());
                             sendNotification = true;
                         }
 
-                    } else
+                    } else {
+                        Log.v(TAG, "No prior notification detected");
                         sendNotification = true;
+                    }
                 }
 
                 if (sendNotification) {
@@ -171,6 +173,7 @@ public class PushUpdateService extends IntentService {
                     updateIntent.setAction(createAction);
                     updateIntent.putExtras(intent.getExtras());
                     updateIntent.putExtra(ALARM_LAST_NOTIFY, savedCity.getLastUpdate());
+                    startService(updateIntent);
                 }
             }
         }
@@ -186,7 +189,7 @@ public class PushUpdateService extends IntentService {
             else if (intent.getAction().equals(ACTION_CREATE_DYNAMIC_NOTIFICATION)) {
                 long triggerAtMillis = intent.getLongExtra(ALARM_TRIGGER_AT_MILLIS, -1);
                 long intervalMillis = intent.getLongExtra(ALARM_INTERVAL_MILLIS, -1);
-                Date lastNotify = (Date) intent.getSerializableExtra(ALARM_LAST_NOTIFY);
+                Calendar lastNotify = (Calendar) intent.getSerializableExtra(ALARM_LAST_NOTIFY);
 
                 if (triggerAtMillis != -1 && intervalMillis != -1) {
                     handleActionCreate(ACTION_DYNAMIC_NOTIFICATION, triggerAtMillis, intervalMillis, lastNotify);
@@ -195,7 +198,7 @@ public class PushUpdateService extends IntentService {
             else if (intent.getAction().equals(ACTION_CREATE_STATIC_NOTIFICATION)) {
                 long triggerAtMillis = intent.getLongExtra(ALARM_TRIGGER_AT_MILLIS, -1);
                 long intervalMillis = intent.getLongExtra(ALARM_INTERVAL_MILLIS, -1);
-                Date lastNotify = (Date) intent.getSerializableExtra(ALARM_LAST_NOTIFY);
+                Calendar lastNotify = (Calendar) intent.getSerializableExtra(ALARM_LAST_NOTIFY);
 
                 if (triggerAtMillis != -1 && intervalMillis != -1) {
                     handleActionCreate(ACTION_STATIC_NOTIFICATION, triggerAtMillis, intervalMillis, lastNotify);

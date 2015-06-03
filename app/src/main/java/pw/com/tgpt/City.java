@@ -198,6 +198,7 @@ public class City {
                 if (lastUpdate == null)
                     lastUpdate = Calendar.getInstance();
                 lastUpdate.setTime(lastUpdateDate);
+                Log.v(TAG, "Last update time: " + lastUpdate.toString());
             }
         }
     }
