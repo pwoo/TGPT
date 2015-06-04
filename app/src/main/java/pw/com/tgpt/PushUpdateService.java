@@ -36,17 +36,15 @@ public class PushUpdateService extends IntentService {
 
     public PushUpdateService() {
         super("PushUpdateService");
-        Log.v(TAG, "PushUpdateService started");
     }
 
     @Override
     public void onDestroy() {
-        Log.w(TAG, "PushUpdateService destroyed!");
         super.onDestroy();
     }
 
-    private void handleActionCreate(String action, long triggerAtMillis, long intervalAtMillis) {
-        handleActionCreate(action, triggerAtMillis, intervalAtMillis, null);
+    private void handleActionUpdateAlarm(String action, long triggerAtMillis, long intervalAtMillis) {
+        handleActionUpdateAlarm(action, triggerAtMillis, intervalAtMillis, null);
     }
 
     /**
@@ -55,8 +53,8 @@ public class PushUpdateService extends IntentService {
      * @param triggerAtMillis
      * @param intervalAtMillis
      */
-    private void handleActionCreate(String action, long triggerAtMillis, long intervalAtMillis, Calendar lastNotify) {
-        Log.v(TAG, "handleActionCreate(" + action + ")");
+    private void handleActionUpdateAlarm(String action, long triggerAtMillis, long intervalAtMillis, Calendar lastNotify) {
+        Log.v(TAG, "handleActionUpdateAlarm(" + action + ")");
 
         AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(action);
@@ -75,8 +73,8 @@ public class PushUpdateService extends IntentService {
      *
      * @param action
      */
-    private void handleActionCancel(String action) {
-        Log.v(TAG, "handleActionCancel(" + action + ")");
+    private void handleActionCancelAlarm(String action) {
+        Log.v(TAG, "handleActionCancelAlarm(" + action + ")");
 
         AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(action);
@@ -90,10 +88,10 @@ public class PushUpdateService extends IntentService {
      *
      * @param intent
      */
-    private void handleActionUpdate(Intent intent) {
+    private void handleActionNotification(Intent intent) {
         String action = intent.getAction();
         String createAction = null;
-        Log.v(TAG, "handleActionUpdate(" + action + ")");
+        Log.v(TAG, "handleActionNotification(" + action + ")");
 
         SharedPreferences settings = getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE);
         int cityId = settings.getInt("pcityid", -1);
@@ -187,7 +185,7 @@ public class PushUpdateService extends IntentService {
         Log.v(TAG, "onHandleIntent");
         if (intent != null) {
             if (intent.getAction().equals(ACTION_DYNAMIC_NOTIFICATION) || intent.getAction().equals(ACTION_STATIC_NOTIFICATION)) {
-                handleActionUpdate(intent);
+                handleActionNotification(intent);
             }
             else if (intent.getAction().equals(ACTION_CREATE_DYNAMIC_NOTIFICATION)) {
                 long triggerAtMillis = intent.getLongExtra(ALARM_TRIGGER_AT_MILLIS, -1);
@@ -195,7 +193,7 @@ public class PushUpdateService extends IntentService {
                 Calendar lastNotify = (Calendar) intent.getSerializableExtra(ALARM_LAST_NOTIFY);
 
                 if (triggerAtMillis != -1 && intervalMillis != -1) {
-                    handleActionCreate(ACTION_DYNAMIC_NOTIFICATION, triggerAtMillis, intervalMillis, lastNotify);
+                    handleActionUpdateAlarm(ACTION_DYNAMIC_NOTIFICATION, triggerAtMillis, intervalMillis, lastNotify);
                 }
             }
             else if (intent.getAction().equals(ACTION_CREATE_STATIC_NOTIFICATION)) {
@@ -204,14 +202,14 @@ public class PushUpdateService extends IntentService {
                 Calendar lastNotify = (Calendar) intent.getSerializableExtra(ALARM_LAST_NOTIFY);
 
                 if (triggerAtMillis != -1 && intervalMillis != -1) {
-                    handleActionCreate(ACTION_STATIC_NOTIFICATION, triggerAtMillis, intervalMillis, lastNotify);
+                    handleActionUpdateAlarm(ACTION_STATIC_NOTIFICATION, triggerAtMillis, intervalMillis, lastNotify);
                 }
             }
             else if (intent.getAction().equals(ACTION_CANCEL_DYNAMIC_NOTIFICATION)) {
-                handleActionCancel(ACTION_DYNAMIC_NOTIFICATION);
+                handleActionCancelAlarm(ACTION_DYNAMIC_NOTIFICATION);
             }
             else if (intent.getAction().equals(ACTION_CANCEL_STATIC_NOTIFICATION)) {
-                handleActionCancel(ACTION_STATIC_NOTIFICATION);
+                handleActionCancelAlarm(ACTION_STATIC_NOTIFICATION);
             }
         }
     }

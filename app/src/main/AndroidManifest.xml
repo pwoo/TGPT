@@ -2,21 +2,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="pw.com.tgpt"
     android:versionCode="1"
-    android:versionName="0.1">
+    android:versionName="0.1" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" ></uses-permission>
-    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" ></uses-permission>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/fuel_gauge"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        >
-
+        android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >
@@ -50,7 +48,6 @@
                 <action android:name="pw.com.tgpt.action.CANCEL_DYNAMIC_NOTIFICATION" />
             </intent-filter>
         </service>
-
     </application>
 
 </manifest>
