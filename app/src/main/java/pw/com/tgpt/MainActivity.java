@@ -1,33 +1,72 @@
 package pw.com.tgpt;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
-    private String[] mOptions = { "Settings", "ABC" };
-    private ActionBarDrawerToggle mDrawerToggle;
+    private ActionBar mActionBar;
+    private NavigationView mNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
-
-        // Set the adapter for the list view
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-                R.layout.drawer_list_item, mOptions));
-        // Set the list's click listener
-//        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
-        mDrawerLayout.openDrawer(mDrawerList);
+        initActionBar();
+        initDrawerLayout();
+        initNavigationView();
     }
 
+    private void initActionBar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        mActionBar = getSupportActionBar();
+        if (mActionBar != null) {
+            mActionBar.setDisplayShowTitleEnabled(true);
+            mActionBar.setDisplayHomeAsUpEnabled(true);
+            mActionBar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
+        }
+    }
+
+    private void initDrawerLayout() {
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+    }
+
+    private void initNavigationView() {
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        mNavigationView.setNavigationItemSelectedListener(this);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem menuItem) {
+        menuItem.setChecked(true);
+
+        switch (menuItem.getItemId()) {
+            case R.id.prices:
+                break;
+            case R.id.settings:
+                break;
+        }
+
+        mDrawerLayout.closeDrawer(mNavigationView);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(mNavigationView);
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 }

@@ -19,6 +19,7 @@ public class BootReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        // TODO: Read Serialized values, place in Parcelable and put into Intent
         Log.d(TAG, "Boot message received!");
         // http://stackoverflow.com/a/5228494 (What exactly does using the Application Context mean?)
         SharedPreferences settings = context.getSharedPreferences(context.getResources().getString(R.string.app_name), Context.MODE_PRIVATE);

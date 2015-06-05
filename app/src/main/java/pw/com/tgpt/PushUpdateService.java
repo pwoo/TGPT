@@ -13,6 +13,8 @@ import android.util.Log;
 import java.util.Calendar;
 
 public class PushUpdateService extends IntentService {
+    // CHANGE: DYNAMIC_NOTIFICATION pulls all city ids from a parcelable, updates and fires notifications
+    // as a group
     private static final String TAG = "PUSH";
     public static final String ACTION_CREATE_STATIC_NOTIFICATION = "pw.com.tgpt.action.CREATE_STATIC_NOTIFICATION";
     public static final String ACTION_STATIC_NOTIFICATION = "pw.com.tgpt.action.STATIC_NOTIFICATION";
@@ -184,32 +186,37 @@ public class PushUpdateService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         Log.v(TAG, "onHandleIntent");
         if (intent != null) {
-            if (intent.getAction().equals(ACTION_DYNAMIC_NOTIFICATION) || intent.getAction().equals(ACTION_STATIC_NOTIFICATION)) {
-                handleActionNotification(intent);
-            }
-            else if (intent.getAction().equals(ACTION_CREATE_DYNAMIC_NOTIFICATION)) {
-                long triggerAtMillis = intent.getLongExtra(ALARM_TRIGGER_AT_MILLIS, -1);
-                long intervalMillis = intent.getLongExtra(ALARM_INTERVAL_MILLIS, -1);
-                Calendar lastNotify = (Calendar) intent.getSerializableExtra(ALARM_LAST_NOTIFY);
+            switch (intent.getAction()) {
+                case ACTION_DYNAMIC_NOTIFICATION:
+                case ACTION_STATIC_NOTIFICATION:
+                    handleActionNotification(intent);
+                    break;
+                case ACTION_CREATE_DYNAMIC_NOTIFICATION: {
+                    long triggerAtMillis = intent.getLongExtra(ALARM_TRIGGER_AT_MILLIS, -1);
+                    long intervalMillis = intent.getLongExtra(ALARM_INTERVAL_MILLIS, -1);
+                    Calendar lastNotify = (Calendar) intent.getSerializableExtra(ALARM_LAST_NOTIFY);
 
-                if (triggerAtMillis != -1 && intervalMillis != -1) {
-                    handleActionUpdateAlarm(ACTION_DYNAMIC_NOTIFICATION, triggerAtMillis, intervalMillis, lastNotify);
+                    if (triggerAtMillis != -1 && intervalMillis != -1) {
+                        handleActionUpdateAlarm(ACTION_DYNAMIC_NOTIFICATION, triggerAtMillis, intervalMillis, lastNotify);
+                    }
                 }
-            }
-            else if (intent.getAction().equals(ACTION_CREATE_STATIC_NOTIFICATION)) {
-                long triggerAtMillis = intent.getLongExtra(ALARM_TRIGGER_AT_MILLIS, -1);
-                long intervalMillis = intent.getLongExtra(ALARM_INTERVAL_MILLIS, -1);
-                Calendar lastNotify = (Calendar) intent.getSerializableExtra(ALARM_LAST_NOTIFY);
+                    break;
+                case ACTION_CREATE_STATIC_NOTIFICATION: {
+                    long triggerAtMillis = intent.getLongExtra(ALARM_TRIGGER_AT_MILLIS, -1);
+                    long intervalMillis = intent.getLongExtra(ALARM_INTERVAL_MILLIS, -1);
+                    Calendar lastNotify = (Calendar) intent.getSerializableExtra(ALARM_LAST_NOTIFY);
 
-                if (triggerAtMillis != -1 && intervalMillis != -1) {
-                    handleActionUpdateAlarm(ACTION_STATIC_NOTIFICATION, triggerAtMillis, intervalMillis, lastNotify);
+                    if (triggerAtMillis != -1 && intervalMillis != -1) {
+                        handleActionUpdateAlarm(ACTION_STATIC_NOTIFICATION, triggerAtMillis, intervalMillis, lastNotify);
+                    }
                 }
-            }
-            else if (intent.getAction().equals(ACTION_CANCEL_DYNAMIC_NOTIFICATION)) {
-                handleActionCancelAlarm(ACTION_DYNAMIC_NOTIFICATION);
-            }
-            else if (intent.getAction().equals(ACTION_CANCEL_STATIC_NOTIFICATION)) {
-                handleActionCancelAlarm(ACTION_STATIC_NOTIFICATION);
+                    break;
+                case ACTION_CANCEL_DYNAMIC_NOTIFICATION:
+                    handleActionCancelAlarm(ACTION_DYNAMIC_NOTIFICATION);
+                    break;
+                case ACTION_CANCEL_STATIC_NOTIFICATION:
+                    handleActionCancelAlarm(ACTION_STATIC_NOTIFICATION);
+                    break;
             }
         }
     }
