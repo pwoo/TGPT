@@ -25,6 +25,7 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private class UpdateCityTask extends AsyncTask<City, Void, Boolean> {
         private Context mContext;
         private City mCity;
+        private int mDefaultColor;
 
         public UpdateCityTask(Context context) {
             mContext = context;
@@ -43,11 +44,27 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+
+            mDefaultColor = mRegularPrice.getCurrentTextColor();
+            mSwipeLayout.setRefreshing(true);
         }
 
         @Override
         protected void onPostExecute(Boolean aBool) {
             mSwipeLayout.setRefreshing(false);
+            int color;
+            switch (mCity.getDirection()) {
+                case UP:
+                    color = mContext.getResources().getColor(android.R.color.holo_red_light);
+                    break;
+                case DOWN:
+                    color = mContext.getResources().getColor(android.R.color.holo_green_light);
+                    break;
+                default:
+                    color =  mDefaultColor;
+                    break;
+            }
+            mRegularPrice.setTextColor(color);
             mRegularPrice.setText(new Double(mCity.getRegularPrice()).toString());
         }
 
