@@ -41,6 +41,7 @@ public class City {
     private Direction mDirection = Direction.NO_CHANGE;
     private Calendar mCurrentDate;
     private Calendar mLastUpdate;
+    private boolean mEnabled;
 
     public enum Direction {
         UP("Up"),
@@ -139,22 +140,25 @@ public class City {
         }
     }
 
-    public boolean updateTGPTData(Context appContext) {
+    public boolean updateTGPTData(Context context) {
         boolean res = false;
         InputStream in = null;
 
-        ConnectivityManager connectivityManager = (ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         if (activeNetworkInfo != null && activeNetworkInfo.isConnected()) {
             try {
-                String spec = appContext.getString(R.string.json_url) + getID();
+                String spec = context.getString(R.string.json_url) + getID();
                 URL url = new URL(spec);
                 URLConnection urlConnection = url.openConnection();
                 in = new BufferedInputStream(urlConnection.getInputStream());
 
-                readJSON(in, appContext);
+                readJSON(in, context);
+                mEnabled = true;
                 mCurrentDate = Calendar.getInstance();
                 res = true;
+
+                DBHelper.getInstance(context).updateCity(this);
             } catch (NullPointerException | IOException | JSONException e) {
                 res = false;
             } finally {
@@ -289,4 +293,10 @@ public class City {
     public Calendar getLastUpdate() { return mLastUpdate; }
 
     public Calendar getCurrentDate() { return mCurrentDate; }
+
+    public void setCurrentDate(Calendar calendar) { mCurrentDate = calendar; }
+
+    public boolean getEnabled() { return mEnabled; }
+
+    public void setEnabled(boolean enabled) { mEnabled = enabled; }
 }

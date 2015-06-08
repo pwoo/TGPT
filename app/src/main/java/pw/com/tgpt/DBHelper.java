@@ -8,7 +8,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 import android.util.Log;
 
+import java.text.FieldPosition;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by PW on 2015-06-07.
@@ -18,6 +22,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "TGPT.db";
     public static DBHelper mInstance;
+    public static final String mDateFormat = "yyyy-MM-dd HH:mm:ss.SSSZ";
 
     public static abstract class CityEntry implements BaseColumns {
         public static final String TABLE_NAME = "CITY";
@@ -112,8 +117,38 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
+    public void updateCity(City city) {
+        SQLiteDatabase db = getWritableDatabase();
+        try {
+            SimpleDateFormat dateFormatter = new SimpleDateFormat(mDateFormat);
+            StringBuffer lastUpdate = new StringBuffer();
+            StringBuffer currentDate = new StringBuffer();
+            dateFormatter.format(city.getLastUpdate().getTime(), lastUpdate, new FieldPosition(0));
+            dateFormatter.format(city.getCurrentDate().getTime(), currentDate, new FieldPosition(0));
+
+            db.beginTransaction();
+            ContentValues values = new ContentValues();
+            values.put(CityEntry.COLUMN_NAME_REGULAR_PRICE, city.getRegularPrice());
+            values.put(CityEntry.COLUMN_NAME_REGULAR_DIFF, city.getRegularDiff());
+            values.put(CityEntry.COLUMN_NAME_LAST_WEEK_REGULAR, city.getLastWeekRegular());
+            values.put(CityEntry.COLUMN_NAME_LAST_MONTH_REGULAR, city.getLastMonthRegular());
+            values.put(CityEntry.COLUMN_NAME_LAST_YR_REGULAR, city.getLastYearRegular());
+            values.put(CityEntry.COLUMN_NAME_CURRENT_DATE, currentDate.toString());
+            values.put(CityEntry.COLUMN_NAME_LAST_UPDATE, lastUpdate.toString());
+            values.put(CityEntry.COLUMN_NAME_ENABLED, city.getEnabled());
+
+            if (db.update(CityEntry.TABLE_NAME, values, CityEntry.COLUMN_NAME_CITY_ID + "=" + city.getID(), null) == 1) {
+                db.setTransactionSuccessful();
+            }
+        }
+        finally {
+            db.endTransaction();
+        }
+    }
+
     public ArrayList<City> getCities() {
         ArrayList<City> cities = new ArrayList<City>();
+        SimpleDateFormat dateFormatter = new SimpleDateFormat(mDateFormat);
         String query = "SELECT * from " + CityEntry.TABLE_NAME;
 
         SQLiteDatabase db = getReadableDatabase();
@@ -123,6 +158,27 @@ public class DBHelper extends SQLiteOpenHelper {
                 City city = new City(
                         c.getInt(c.getColumnIndex(CityEntry.COLUMN_NAME_CITY_ID)),
                         c.getString(c.getColumnIndex(CityEntry.COLUMN_NAME_CITY_NAME)));
+
+                city.setRegularPrice(c.getDouble(c.getColumnIndex(CityEntry.COLUMN_NAME_REGULAR_PRICE)));
+                city.setRegularDiff(c.getDouble(c.getColumnIndex(CityEntry.COLUMN_NAME_REGULAR_DIFF)));
+                city.setLastWeekRegular(c.getDouble(c.getColumnIndex(CityEntry.COLUMN_NAME_LAST_WEEK_REGULAR)));
+                city.setLastMonthRegular(c.getDouble(c.getColumnIndex(CityEntry.COLUMN_NAME_LAST_MONTH_REGULAR)));
+                city.setLastYearRegular(c.getDouble(c.getColumnIndex(CityEntry.COLUMN_NAME_LAST_YR_REGULAR)));
+                city.setEnabled(c.getInt(c.getColumnIndex(CityEntry.COLUMN_NAME_ENABLED)) != 0);
+
+                String lastUpdateString = c.getString(c.getColumnIndex(CityEntry.COLUMN_NAME_LAST_UPDATE));
+                if (lastUpdateString != null) {
+                    Calendar lastUpdate = Calendar.getInstance();
+                    lastUpdate.setTime(dateFormatter.parse(lastUpdateString, new ParsePosition(0)));
+                    city.setLastUpdate(lastUpdate);
+                }
+
+                String currentDateString = c.getString(c.getColumnIndex(CityEntry.COLUMN_NAME_CURRENT_DATE));
+                if (currentDateString != null) {
+                    Calendar currentDate = Calendar.getInstance();
+                    currentDate.setTime(dateFormatter.parse(currentDateString, new ParsePosition(0)));
+                    city.setCurrentDate(currentDate);
+                }
                 cities.add(city);
             } while (c.moveToNext());
         }
