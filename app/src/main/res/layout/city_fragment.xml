@@ -10,8 +10,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView android:id="@+id/city_fragment_regular_price_label"
-                android:text="@string/regular_price"
+            <TextView android:id="@+id/city_fragment_last_update"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"/>
@@ -22,12 +21,35 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"/>
 
-            <TextView android:id="@+id/city_fragment_regular_price"
-                android:textSize="64sp"
-                android:textStyle="bold"
+            <RelativeLayout
+                android:id="@+id/city_fragment_main_prices_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/city_fragment_regular_price_label"/>
+                android:layout_below="@id/city_fragment_last_update">
+                <TextView android:id="@+id/city_fragment_regular_price"
+                    android:textSize="72sp"
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    />
+
+                <ImageView android:id="@+id/city_fragment_direction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_toRightOf="@id/city_fragment_regular_price"
+                    android:layout_centerVertical="true"
+                    android:paddingRight="10dp"
+                    />
+            </RelativeLayout>
+
+            <TextView android:id="@+id/city_fragment_regular_diff"
+                android:textStyle="italic"
+                android:textSize="24dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/city_fragment_main_prices_layout"
+                />
+
         </RelativeLayout>
     </ScrollView>
 </android.support.v4.widget.SwipeRefreshLayout>

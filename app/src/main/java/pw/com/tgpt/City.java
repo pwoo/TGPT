@@ -38,14 +38,14 @@ public class City {
     private double mLastWeekRegular;
     private double mLastMonthRegular;
     private double mLastYearRegular;
-    private Direction mDirection;
+    private Direction mDirection = Direction.NO_CHANGE;
     private Calendar mCurrentDate;
     private Calendar mLastUpdate;
 
     public enum Direction {
-        UP("up"),
-        DOWN("down"),
-        NO_CHANGE("no change");
+        UP("Up"),
+        DOWN("Down"),
+        NO_CHANGE("No change");
 
         private final String desc;
         private Direction(String value) {

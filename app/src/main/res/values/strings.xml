@@ -3,12 +3,12 @@
     <string name="search_title">City</string>
     <string name="search_hint">City</string>
     <string name="regular_price">Regular Price</string>
-
+    <string name="update_failed">Update Failed</string>
     <string name="action_settings">Settings</string>
-
+    <string name="units">cents/litre</string>
     <string name="json_url">http://tomorrowsgaspricetoday.com/feed-mobile-jsonout.php?city=</string>
 
-    <string name="tgpt_prices">Prices</string>
+    <string name="tgpt_prices">Home</string>
     <string name="tgpt_settings">Settings</string>
 
     <string name="tgpt_channel">channel</string>
