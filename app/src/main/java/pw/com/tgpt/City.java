@@ -1,10 +1,12 @@
 package pw.com.tgpt;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -27,17 +29,18 @@ import java.util.Date;
  */
 public class City {
     private static final String TAG = "CITY";
-    private static ArrayList<City> cityList;
-    private int id;
-    private String name;
-    private double regularPrice;
-    private double regularDiff;
-    private double lastWeekRegular;
-    private double lastMonthRegular;
-    private double lastYearRegular;
-    private Direction direction;
-    private Calendar currentDate;
-    private Calendar lastUpdate;
+    private static ArrayList<City> mCityList;
+
+    private int mID;
+    private String mName;
+    private double mRegularPrice;
+    private double mRegularDiff;
+    private double mLastWeekRegular;
+    private double mLastMonthRegular;
+    private double mLastYearRegular;
+    private Direction mDirection;
+    private Calendar mCurrentDate;
+    private Calendar mLastUpdate;
 
     public enum Direction {
         UP("up"),
@@ -54,28 +57,35 @@ public class City {
         }
     }
 
-    public static void init(Resources r) {
-        try {
-            if (cityList == null || cityList.isEmpty()) {
-                XmlResourceParser parser = r.getXml(R.xml.cities);
-                cityList = City.generateCities(parser);
-            }
+    public static void init(Context context) {
+        Resources r = context.getResources();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+        int previousVersion = prefs.getInt("version", -1);
+        if(previousVersion < BuildConfig.VERSION_CODE) {
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putInt("version", BuildConfig.VERSION_CODE);
+            editor.commit();
+
+            parseXML(context);
         }
-        catch (Resources.NotFoundException e) {
-            // TODO: Kill process / activity
+
+        mCityList = DBHelper.getInstance(context).getCities();
+        for (City c : mCityList) {
+            Log.v(TAG, "City " + c.getName() + " instantiated");
         }
     }
 
     public static ArrayList<City> getCitiesArray() {
-        return cityList;
+        return mCityList;
     }
 
     public static City getCity(int id) {
-        if (cityList.isEmpty()) {
+        if (mCityList.isEmpty()) {
             Log.w(TAG, "City class uninitialized!");
         }
 
-        for (City c : cityList) {
+        for (City c : mCityList) {
             if (c.getID() == id) {
                 return c;
             }
@@ -86,15 +96,16 @@ public class City {
     private City() {
     }
 
-    protected City(int id, String name) {
-        this.id = id;
-        this.name = name;
+    protected City(int mID, String mName) {
+        this.mID = mID;
+        this.mName = mName;
     }
 
-    private static ArrayList<City> generateCities(XmlResourceParser parser) {
+    private static void parseXML(Context context) {
+        Resources r = context.getResources();
+        XmlResourceParser parser = r.getXml(R.xml.cities);
         int id = -1;
         String name = null;
-        ArrayList<City> cityList = new ArrayList<City>();
         try {
             boolean cityFound = false;
             while (parser.getEventType() != XmlResourceParser.END_DOCUMENT) {
@@ -108,8 +119,7 @@ public class City {
                     case XmlResourceParser.END_TAG:
                         if (cityFound) {
                             cityFound = false;
-                            City city = new City(id, name);
-                            cityList.add(city);
+                            DBHelper.getInstance(context).insertCity(id, name);
                         }
                         id = -1;
                         name = null;
@@ -130,7 +140,6 @@ public class City {
                 parser.close();
             }
         }
-        return cityList;
     }
 
     public boolean updateTGPTData(Context appContext) {
@@ -147,7 +156,7 @@ public class City {
                 in = new BufferedInputStream(urlConnection.getInputStream());
 
                 readJSON(in, appContext);
-                currentDate = Calendar.getInstance();
+                mCurrentDate = Calendar.getInstance();
                 res = true;
             } catch (NullPointerException | IOException | JSONException e) {
                 res = false;
@@ -195,92 +204,92 @@ public class City {
         if (!temp.isEmpty()) {
             Date lastUpdateDate = formatter.parse(temp, new ParsePosition(0));
             if (lastUpdateDate != null) {
-                if (lastUpdate == null)
-                    lastUpdate = Calendar.getInstance();
-                lastUpdate.setTime(lastUpdateDate);
-                Log.v(TAG, "Last update time: " + lastUpdate.toString());
+                if (mLastUpdate == null)
+                    mLastUpdate = Calendar.getInstance();
+                mLastUpdate.setTime(lastUpdateDate);
+                Log.v(TAG, "Last update time: " + mLastUpdate.toString());
             }
         }
     }
 
     public void setID(int id) {
-        this.id = id;
+        this.mID = id;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.mName = name;
     }
 
     public int getID() {
-        return id;
+        return mID;
     }
 
     public String getName() {
-        return name;
+        return mName;
     }
 
     public String toString()
     {
-        return name;
+        return mName;
     }
 
     public double getRegularPrice() {
-        return regularPrice;
+        return mRegularPrice;
     }
 
     public void setRegularPrice(double regularPrice) {
-        Log.v(TAG, getName() + ", old regularPrice: " + this.regularPrice
-                + ", new regularPrice: " + regularPrice);
-        this.regularPrice = regularPrice;
+        Log.v(TAG, getName() + ", old mRegularPrice: " + this.mRegularPrice
+                + ", new mRegularPrice: " + regularPrice);
+        this.mRegularPrice = regularPrice;
     }
 
     public double getRegularDiff() {
-        return regularDiff;
+        return mRegularDiff;
     }
 
-    public void setRegularDiff(double regularDiff) {
-        Log.v(TAG, getName() + ", old regularDiff: " + this.regularDiff
-                + ", new regularDiff: " + regularDiff);
-        this.regularDiff = regularDiff;
+    public void setRegularDiff(double mRegularDiff) {
+        Log.v(TAG, getName() + ", old mRegularDiff: " + this.mRegularDiff
+                + ", new mRegularDiff: " + mRegularDiff);
+        this.mRegularDiff = mRegularDiff;
     }
 
     public double getLastWeekRegular() {
-        return lastWeekRegular;
+        return mLastWeekRegular;
     }
 
-    public void setLastWeekRegular(double lastWeekRegular) {
-        Log.v(TAG, getName() + ", old lastWeekRegular: " + this.lastWeekRegular
-                + ", new lastWeekRegular: " + lastWeekRegular);
-        this.lastWeekRegular = lastWeekRegular;
+    public void setLastWeekRegular(double mLastWeekRegular) {
+        Log.v(TAG, getName() + ", old mLastWeekRegular: " + this.mLastWeekRegular
+                + ", new mLastWeekRegular: " + mLastWeekRegular);
+        this.mLastWeekRegular = mLastWeekRegular;
     }
 
     public double getLastMonthRegular() {
-        return lastMonthRegular;
+        return mLastMonthRegular;
     }
 
-    public void setLastMonthRegular(double lastMonthRegular) {
-        this.lastMonthRegular = lastMonthRegular;
+    public void setLastMonthRegular(double mLastMonthRegular) {
+        this.mLastMonthRegular = mLastMonthRegular;
     }
 
     public double getLastYearRegular() {
-        return lastYearRegular;
+        return mLastYearRegular;
     }
 
     public void setLastYearRegular(double lastYearRegular) {
-        this.lastYearRegular = lastYearRegular;
+        this.mLastYearRegular = lastYearRegular;
     }
 
     public Direction getDirection() {
-        return direction;
+        return mDirection;
     }
 
     public void setDirection(Direction direction) {
-        this.direction = direction;
+        this.mDirection = direction;
     }
 
-    public void setLastUpdate(Calendar update) { lastUpdate = update; }
+    public void setLastUpdate(Calendar update) { mLastUpdate = update; }
 
-    public Calendar getLastUpdate() { return lastUpdate; }
+    public Calendar getLastUpdate() { return mLastUpdate; }
 
-    public Calendar getCurrentDate() { return currentDate; }
+    public Calendar getCurrentDate() { return mCurrentDate; }
 }

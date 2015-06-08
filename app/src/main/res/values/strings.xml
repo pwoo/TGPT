@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">TGPT Lite</string>
+    <string name="search_title">City</string>
+    <string name="search_hint">City</string>
 
     <string name="action_settings">Settings</string>
 
@@ -13,12 +15,4 @@
     <string name="tgpt_regular_price">regularprice</string>
     <string name="tgpt_regular_diff">regulardifference</string>
     <string name="tgpt_last_week_regular">lastweekregular</string>
-
-    <string name="pref_city_name">pcityname</string>
-    <string name="pref_city_tgpt_id">pcityid</string>
-    <string name="pref_time_trigger_hour">ptimehour</string>
-    <string name="pref_time_trigger_minute">ptimeminute</string>
-    <string name="pref_dynamic_update">pdynamic</string>
-    <string name="pref_daily_update">pdaily</string>
-    <string name="last_update">lastupdate</string>
 </resources>

@@ -32,8 +32,6 @@ public class PushUpdateService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        City.init(getResources());
     }
 
     public PushUpdateService() {
