@@ -27,11 +27,14 @@ import java.util.concurrent.ExecutionException;
  */
 public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private static final String TAG = "CITYFRAG";
-    SwipeRefreshLayout mSwipeLayout;
-    TextView mLastUpdate;
-    TextView mRegularPrice;
-    TextView mRegularDiff;
-    ImageView mDirection;
+    private SwipeRefreshLayout mSwipeLayout;
+    private TextView mLastUpdate;
+    private TextView mRegularPrice;
+    private TextView mRegularDiff;
+    private TextView mLastWeek;
+    private TextView mLastMonth;
+    private TextView mLastYear;
+    private ImageView mDirection;
     private City mCity;
 
     private class UpdateCityTask extends AsyncTask<City, Void, Boolean> {
@@ -105,6 +108,9 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             }
             mRegularPrice.setTextColor(color);
             mRegularPrice.setText(new Double(mCity.getRegularPrice()).toString());
+            mLastWeek.setText(new Double(mCity.getLastWeekRegular()).toString());
+            mLastMonth.setText(new Double(mCity.getLastMonthRegular()).toString());
+            mLastYear.setText(new Double(mCity.getLastYearRegular()).toString());
 
             mDirection.setImageResource(directionRes);
         }
@@ -140,6 +146,9 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         mRegularPrice = (TextView) v.findViewById(R.id.city_fragment_regular_price);
         mRegularDiff = (TextView) v.findViewById(R.id.city_fragment_regular_diff);
         mDirection = (ImageView) v.findViewById(R.id.city_fragment_direction);
+        mLastWeek = (TextView) v.findViewById(R.id.city_fragment_last_week);
+        mLastMonth = (TextView) v.findViewById(R.id.city_fragment_last_month);
+        mLastYear = (TextView) v.findViewById(R.id.city_fragment_last_year);
 
         mSwipeLayout.setOnRefreshListener(this);
         return v;

@@ -188,6 +188,8 @@ public class City {
         setRegularPrice(parser.getDouble(appContext.getString(R.string.tgpt_regular_price)));
         setRegularDiff(parser.getDouble(appContext.getString(R.string.tgpt_regular_diff)));
         setLastWeekRegular(parser.getDouble(appContext.getString(R.string.tgpt_last_week_regular)));
+        setLastMonthRegular(parser.getDouble(appContext.getString(R.string.tgpt_last_week_regular)));
+        setLastYearRegular(parser.getDouble(appContext.getString(R.string.tgpt_last_year_regular)));
 
         String temp = parser.getString("regulardirection");
         Direction direction = Direction.NO_CHANGE;

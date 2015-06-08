@@ -4,6 +4,9 @@
     <string name="search_hint">City</string>
     <string name="regular_price">Regular Price</string>
     <string name="update_failed">Update Failed</string>
+    <string name="last_week">Last Week</string>
+    <string name="last_month">Last Month</string>
+    <string name="last_year">Last Year</string>
     <string name="action_settings">Settings</string>
     <string name="units">cents/litre</string>
     <string name="json_url">http://tomorrowsgaspricetoday.com/feed-mobile-jsonout.php?city=</string>
@@ -16,4 +19,6 @@
     <string name="tgpt_regular_price">regularprice</string>
     <string name="tgpt_regular_diff">regulardifference</string>
     <string name="tgpt_last_week_regular">lastweekregular</string>
+    <string name="tgpt_last_month_regular">lastmonthregular</string>
+    <string name="tgpt_last_year_regular">lastyearregular</string>
 </resources>

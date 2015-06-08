@@ -50,6 +50,45 @@
                 android:layout_below="@id/city_fragment_main_prices_layout"
                 />
 
+            <TextView android:id="@+id/city_fragment_last_week_label"
+                android:text="@string/last_week"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/city_fragment_regular_diff"/>
+
+            <TextView android:id="@+id/city_fragment_last_week"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/city_fragment_last_week_label"
+                />
+
+            <TextView android:id="@+id/city_fragment_last_month_label"
+                android:text="@string/last_month"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/city_fragment_last_week"/>
+
+            <TextView android:id="@+id/city_fragment_last_month"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/city_fragment_last_month_label"/>
+
+            <TextView android:id="@+id/city_fragment_last_year_label"
+                android:text="@string/last_year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/city_fragment_last_month"/>
+
+            <TextView android:id="@+id/city_fragment_last_year"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/city_fragment_last_year_label"/>
         </RelativeLayout>
     </ScrollView>
 </android.support.v4.widget.SwipeRefreshLayout>
