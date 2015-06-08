@@ -2,6 +2,7 @@
     <string name="app_name">TGPT Lite</string>
     <string name="search_title">City</string>
     <string name="search_hint">City</string>
+    <string name="regular_price">Regular Price</string>
 
     <string name="action_settings">Settings</string>
 

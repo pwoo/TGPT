@@ -71,9 +71,6 @@ public class City {
         }
 
         mCityList = DBHelper.getInstance(context).getCities();
-        for (City c : mCityList) {
-            Log.v(TAG, "City " + c.getName() + " instantiated");
-        }
     }
 
     public static ArrayList<City> getCitiesArray() {

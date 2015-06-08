@@ -155,6 +155,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         City city = (City) parent.getItemAtPosition(position);
 
+        mActionBar.setTitle(city.getName());
+        mActionBar.collapseActionView();
+
         CityFragment cityFragment = CityFragment.newInstance(city.getID());
 
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_frame, cityFragment).addToBackStack(null).commit();

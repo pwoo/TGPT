@@ -1,5 +1,7 @@
 package pw.com.tgpt;
 
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,11 +10,47 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.concurrent.ExecutionException;
+
 /**
  * Created by PW on 2015-06-07.
  */
 public class CityFragment extends Fragment {
     TextView mRegularPrice;
+
+    private class UpdateCityTask extends AsyncTask<City, Void, Boolean> {
+        private Context mContext;
+        private City mCity;
+
+        public UpdateCityTask(Context context) {
+            mContext = context;
+        }
+
+        @Override
+        protected Boolean doInBackground(City... params) {
+            mCity = params[0];
+            if (mCity != null && mContext != null) {
+                mCity.updateTGPTData(mContext);
+            }
+
+            return Boolean.TRUE;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBool) {
+            mRegularPrice.setText(new Double(mCity.getRegularPrice()).toString());
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+        }
+    }
 
     public static CityFragment newInstance(int id) {
         CityFragment cityFragment = new CityFragment();
@@ -47,10 +85,19 @@ public class CityFragment extends Fragment {
 
         if (cityId != 0) {
             City city = City.getCity(cityId);
-            if (city != null) {
-                mRegularPrice.setText("RP: " + city.getRegularPrice());
-            }
-        }
+            UpdateCityTask updateTask = new UpdateCityTask(getActivity());
+            updateTask.execute(city);
 
+            try {
+                if (updateTask.get() == Boolean.FALSE) {
+                    // Retrieval failed -- add retry?
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 }
