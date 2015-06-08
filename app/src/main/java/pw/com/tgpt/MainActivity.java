@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         CityFragment cityFragment = CityFragment.newInstance(city.getID());
 
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_frame, cityFragment).addToBackStack(null).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, cityFragment).commit();
     }
 
     public void handleIntent(Intent intent) {

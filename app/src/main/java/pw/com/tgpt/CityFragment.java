@@ -5,6 +5,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +17,9 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by PW on 2015-06-07.
  */
-public class CityFragment extends Fragment {
+public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+    private static final String TAG = "CITYFRAG";
+    SwipeRefreshLayout mSwipeLayout;
     TextView mRegularPrice;
 
     private class UpdateCityTask extends AsyncTask<City, Void, Boolean> {
@@ -43,6 +47,7 @@ public class CityFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Boolean aBool) {
+            mSwipeLayout.setRefreshing(false);
             mRegularPrice.setText(new Double(mCity.getRegularPrice()).toString());
         }
 
@@ -72,15 +77,26 @@ public class CityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.city_fragment, container, false);
 
+        mSwipeLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_container);
         mRegularPrice = (TextView) v.findViewById(R.id.city_fragment_regular_price);
 
+        mSwipeLayout.setOnRefreshListener(this);
         return v;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        handleCity();
+    }
 
+    @Override
+    public void onRefresh() {
+        Log.v("TAG", "Refresh triggered");
+        handleCity();
+    }
+
+    public void handleCity() {
         int cityId = getArguments().getInt("id");
 
         if (cityId != 0) {
@@ -97,7 +113,6 @@ public class CityFragment extends Fragment {
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
-
         }
     }
 }
