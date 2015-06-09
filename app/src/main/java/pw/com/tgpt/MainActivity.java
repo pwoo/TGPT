@@ -60,7 +60,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         initActionBar();
         initDrawerLayout();
         initNavigationView();
-        initStarredFragment();
 
         mInitDataTask = new InitDataTask();
         mInitDataTask.execute(this);
@@ -75,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
+        Log.v(TAG, "onCreateOptionsMenu");
         return true;
     }
 
@@ -137,7 +136,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void handleIntent(Intent intent) {
-
+        switch (intent.getAction()) {
+            default:
+                initStarredFragment();
+                break;
+        }
     }
 
     public ActionBar getToolbar() {

@@ -35,38 +35,43 @@ public class DBHelper extends SQLiteOpenHelper {
         public static final String COLUMN_NAME_LAST_YR_REGULAR = "LASTYRREG";
         public static final String COLUMN_NAME_LAST_UPDATE = "LASTUPDATE";
         public static final String COLUMN_NAME_CURRENT_DATE = "CURRENTDATE";
-
-        public static final String COLUMN_NAME_ENABLED = "VISIBLE";
-    }
-
-    public static abstract class StarredEntry implements BaseColumns {
-        public static final String TABLE_NAME = "STARRED";
-        public static final String COLUMN_NAME_CITY_ID = "CITYID"; // Secondary key
-
+        public static final String COLUMN_NAME_STARRED = "STARRED";
         public static final String COLUMN_NAME_ENABLED = "VISIBLE";
     }
 
     public static abstract class Notifications implements BaseColumns {
-        public static final String TABLE_NAME = "STARRED";
+        public static final String TABLE_NAME = "NOTIFICATIONS";
+        public static final String COLUMN_NAME_ID = "ID";
         public static final String COLUMN_NAME_CITY_ID = "CITYID"; // Secondary key
 
         public static final String COLUMN_NAME_DYNAMIC = "DYNAMIC";
-        public static final String COLUMN_NAME_TRIGGER_TIME = "TRIGGERTIME";
     }
 
-    private static String CREATE_TABLE_CITIES =
-            "CREATE TABLE " + CityEntry.TABLE_NAME + "("
-                    + CityEntry.COLUMN_NAME_CITY_ID + " INTEGER PRIMARY KEY,"
-                    + CityEntry.COLUMN_NAME_CITY_NAME + " TEXT NOT NULL,"
-                    + CityEntry.COLUMN_NAME_REGULAR_PRICE + " REAL DEFAULT 0,"
-                    + CityEntry.COLUMN_NAME_REGULAR_DIFF + " REAL DEFAULT 0,"
-                    + CityEntry.COLUMN_NAME_LAST_WEEK_REGULAR + " REAL DEFAULT 0,"
-                    + CityEntry.COLUMN_NAME_LAST_MONTH_REGULAR + " REAL DEFAULT 0,"
-                    + CityEntry.COLUMN_NAME_LAST_YR_REGULAR + " REAL DEFAULT 0,"
-                    + CityEntry.COLUMN_NAME_LAST_UPDATE + " DATETIME,"
-                    + CityEntry.COLUMN_NAME_CURRENT_DATE + " DATETIME,"
-                    + CityEntry.COLUMN_NAME_ENABLED + " BOOLEAN DEFAULT 1" + ")";
+    private static StringBuilder CREATE_TABLE_CITIES = new StringBuilder()
+            .append("CREATE TABLE ")
+            .append(CityEntry.TABLE_NAME)
+            .append('(')
+            .append(CityEntry.COLUMN_NAME_CITY_ID).append(" INTEGER PRIMARY KEY,")
+            .append(CityEntry.COLUMN_NAME_CITY_NAME).append(" TEXT NOT NULL,")
+            .append(CityEntry.COLUMN_NAME_REGULAR_PRICE).append(" REAL DEFAULT 0,")
+            .append(CityEntry.COLUMN_NAME_REGULAR_DIFF).append(" REAL DEFAULT 0,")
+            .append(CityEntry.COLUMN_NAME_LAST_WEEK_REGULAR).append(" REAL DEFAULT 0,")
+            .append(CityEntry.COLUMN_NAME_LAST_MONTH_REGULAR).append(" REAL DEFAULT 0,")
+            .append(CityEntry.COLUMN_NAME_LAST_YR_REGULAR).append(" REAL DEFAULT 0,")
+            .append(CityEntry.COLUMN_NAME_LAST_UPDATE).append(" DATETIME,")
+            .append(CityEntry.COLUMN_NAME_CURRENT_DATE).append(" DATETIME,")
+            .append(CityEntry.COLUMN_NAME_STARRED).append(" BOOLEAN DEFAULT 0,")
+            .append(CityEntry.COLUMN_NAME_ENABLED).append(" BOOLEAN DEFAULT 1")
+            .append(')');
 
+    private static StringBuilder CREATE_TABLE_NOTIFICATIONS = new StringBuilder()
+            .append("CREATE TABLE ")
+            .append(Notifications.TABLE_NAME)
+            .append('(')
+            .append(Notifications.COLUMN_NAME_ID).append(" INTEGER PRIMARY KEY AUTOINCREMENT,")
+            .append(Notifications.COLUMN_NAME_CITY_ID).append(" INTEGER NOT NULL,")
+            .append(Notifications.COLUMN_NAME_DYNAMIC).append(" BOOLEAN DEFAULT 0")
+            .append(')');
 
     public static DBHelper getInstance(Context context) {
         if (mInstance == null) {
@@ -82,7 +87,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.beginTransaction();
         try {
-            db.execSQL(CREATE_TABLE_CITIES);
+            db.execSQL(CREATE_TABLE_CITIES.toString());
+            db.execSQL(CREATE_TABLE_NOTIFICATIONS.toString());
             db.setTransactionSuccessful();
         }
         finally {
@@ -117,9 +123,62 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
+    public void insertNotification(Notification n) {
+        SQLiteDatabase db = getWritableDatabase();
+        try {
+            long key = -1;
+            db.beginTransaction();
+            ContentValues values = new ContentValues();
+            values.put(Notifications.COLUMN_NAME_CITY_ID, n.getCity().getID());
+            values.put(Notifications.COLUMN_NAME_DYNAMIC, n.getDynamic());
+
+            if ((key = db.insert(Notifications.TABLE_NAME, null, values)) != -1) {
+                db.setTransactionSuccessful();
+                n.setID(key);
+            }
+        }
+        finally {
+            db.endTransaction();
+        }
+    }
+
+    public void updateNotification(Notification n) {
+        if (n.getID() >= 0) {
+            SQLiteDatabase db = getWritableDatabase();
+            try {
+                Log.v(TAG, "Notification " + n.getID() + " beginning update");
+                ContentValues values = new ContentValues();
+
+                if (db.update(Notifications.TABLE_NAME, values, Notifications.COLUMN_NAME_ID + "=" + n.getID(), null) == 1) {
+                    db.setTransactionSuccessful();
+                    Log.v(TAG, "Notification " + n.getID() + " update successful");
+                }
+            } finally {
+                db.endTransaction();
+            }
+        }
+        else
+            insertNotification(n);
+    }
+    public void deleteNotification(Notification n) {
+        SQLiteDatabase db = getWritableDatabase();
+        try {
+            Log.v(TAG, "Notification " + n.getID() + " beginning delete");
+
+            if (db.delete(Notifications.TABLE_NAME, Notifications.COLUMN_NAME_ID + "=" + n.getID(), null) == 1) {
+                db.setTransactionSuccessful();
+                Log.v(TAG, "Notification " + n.getID() + " delete successful");
+            }
+        }
+        finally {
+            db.endTransaction();
+        }
+    }
+
     public void updateCity(City city) {
         SQLiteDatabase db = getWritableDatabase();
         try {
+            Log.v(TAG, "City " + city.getName() + " beginning update");
             SimpleDateFormat dateFormatter = new SimpleDateFormat(mDateFormat);
             StringBuffer lastUpdate = new StringBuffer();
             StringBuffer currentDate = new StringBuffer();
@@ -136,9 +195,11 @@ public class DBHelper extends SQLiteOpenHelper {
             values.put(CityEntry.COLUMN_NAME_CURRENT_DATE, currentDate.toString());
             values.put(CityEntry.COLUMN_NAME_LAST_UPDATE, lastUpdate.toString());
             values.put(CityEntry.COLUMN_NAME_ENABLED, city.getEnabled());
+            values.put(CityEntry.COLUMN_NAME_STARRED, city.getStarred());
 
             if (db.update(CityEntry.TABLE_NAME, values, CityEntry.COLUMN_NAME_CITY_ID + "=" + city.getID(), null) == 1) {
                 db.setTransactionSuccessful();
+                Log.v(TAG, "City " + city.getName() + " update successful");
             }
         }
         finally {
@@ -165,6 +226,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 city.setLastMonthRegular(c.getDouble(c.getColumnIndex(CityEntry.COLUMN_NAME_LAST_MONTH_REGULAR)));
                 city.setLastYearRegular(c.getDouble(c.getColumnIndex(CityEntry.COLUMN_NAME_LAST_YR_REGULAR)));
                 city.setEnabled(c.getInt(c.getColumnIndex(CityEntry.COLUMN_NAME_ENABLED)) != 0);
+                city.setStarred(c.getInt(c.getColumnIndex(CityEntry.COLUMN_NAME_STARRED)) != 0);
 
                 String lastUpdateString = c.getString(c.getColumnIndex(CityEntry.COLUMN_NAME_LAST_UPDATE));
                 if (lastUpdateString != null) {
@@ -179,10 +241,41 @@ public class DBHelper extends SQLiteOpenHelper {
                     currentDate.setTime(dateFormatter.parse(currentDateString, new ParsePosition(0)));
                     city.setCurrentDate(currentDate);
                 }
+
                 cities.add(city);
             } while (c.moveToNext());
         }
 
         return cities;
+    }
+
+    public ArrayList<Notification> getNotifications(City city) {
+        ArrayList<Notification> notifications = new ArrayList<Notification>();
+
+        StringBuilder query = new StringBuilder()
+                .append("SELECT * from ")
+                .append(Notifications.TABLE_NAME)
+                .append(" WHERE ")
+                .append(Notifications.COLUMN_NAME_CITY_ID)
+                .append("=")
+                .append(city.getID());
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.rawQuery(query.toString(), null);
+        if (c.moveToFirst()) {
+            do {
+                long id = c.getInt(c.getColumnIndex(Notifications.COLUMN_NAME_ID));
+                int cityId = c.getInt(c.getColumnIndex(Notifications.COLUMN_NAME_CITY_ID));
+                boolean isDynamic = c.getInt(c.getColumnIndex(Notifications.COLUMN_NAME_DYNAMIC)) != 0;
+
+                Notification n = new Notification(id, city, isDynamic);
+                notifications.add(n);
+            } while (c.moveToNext());
+        }
+
+        if (notifications.isEmpty())
+            notifications = null;
+
+        return notifications;
     }
 }

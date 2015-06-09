@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/city_starred"
+        app:showAsAction="always"
+        android:title="Starred" />
+    <item android:id="@+id/city_settings"
+        android:title="Notify on update"
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:checkable="true"/>
+</menu>

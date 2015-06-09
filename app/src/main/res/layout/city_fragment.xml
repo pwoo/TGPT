@@ -15,12 +15,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"/>
 
-            <ImageView android:id="@+id/city_fragment_star"
-                android:src="@drawable/ic_star_border_black_24dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"/>
-
             <RelativeLayout
                 android:id="@+id/city_fragment_main_prices_layout"
                 android:layout_width="wrap_content"
@@ -40,21 +34,28 @@
                     android:layout_centerVertical="true"
                     android:paddingRight="10dp"
                     />
-            </RelativeLayout>
 
-            <TextView android:id="@+id/city_fragment_regular_diff"
-                android:textStyle="italic"
-                android:textSize="24dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/city_fragment_main_prices_layout"
-                />
+                <TextView
+                    android:id="@+id/city_fragment_regular_diff_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"/>
+
+                <TextView android:id="@+id/city_fragment_regular_diff"
+                    android:textSize="72sp"
+                    android:paddingLeft="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/city_fragment_regular_diff_label" />
+
+            </RelativeLayout>
 
             <TextView android:id="@+id/city_fragment_last_week_label"
                 android:text="@string/last_week"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/city_fragment_regular_diff"/>
+                android:layout_below="@id/city_fragment_main_prices_layout"/>
 
             <TextView android:id="@+id/city_fragment_last_week"
                 android:textSize="36sp"
@@ -89,6 +90,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/city_fragment_last_year_label"/>
+            
+            <TextView
+                android:id="@+id/city_fragment_current_date"
+                android:textSize="8sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/city_fragment_last_year"
+                android:layout_alignParentRight="true"/>
         </RelativeLayout>
     </ScrollView>
 </android.support.v4.widget.SwipeRefreshLayout>

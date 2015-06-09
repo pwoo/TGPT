@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,6 +26,7 @@ import java.util.concurrent.TimeoutException;
  */
 public class StarredFragment extends ListFragment implements AdapterView.OnItemClickListener,
         MenuItemCompat.OnActionExpandListener {
+    private static final String TAG = "SFR";
     private AutoCompleteTextView mSearchView;
 
     @Override
@@ -44,6 +46,7 @@ public class StarredFragment extends ListFragment implements AdapterView.OnItemC
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.v(TAG, "onCreateOptionsMenu");
         inflater.inflate(R.menu.search_menu, menu);
         MenuItem item = menu.findItem(R.id.city_search);
         MenuItemCompat.setOnActionExpandListener(item, this);

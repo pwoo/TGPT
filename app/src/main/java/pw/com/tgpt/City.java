@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 
 /**
  * Created by PW on 2015-04-26.
@@ -33,6 +34,7 @@ public class City {
 
     private int mID;
     private String mName;
+    private Notification mDynamicNotification;
     private double mRegularPrice;
     private double mRegularDiff;
     private double mLastWeekRegular;
@@ -41,7 +43,8 @@ public class City {
     private Direction mDirection = Direction.NO_CHANGE;
     private Calendar mCurrentDate;
     private Calendar mLastUpdate;
-    private boolean mEnabled;
+    private boolean mEnabled = true;
+    private boolean mStarred = false;
 
     public enum Direction {
         UP("Up"),
@@ -158,8 +161,6 @@ public class City {
                 mEnabled = true;
                 mCurrentDate = Calendar.getInstance();
                 res = true;
-
-                DBHelper.getInstance(context).updateCity(this);
             } catch (NullPointerException | IOException | JSONException e) {
                 res = false;
             } finally {
@@ -302,4 +303,20 @@ public class City {
     public boolean getEnabled() { return mEnabled; }
 
     public void setEnabled(boolean enabled) { mEnabled = enabled; }
+
+    public boolean getStarred() { return mStarred; }
+
+    public void setStarred(boolean star) {
+        mStarred = star;
+    }
+
+    public void setDynamicNotification(Notification n) { mDynamicNotification = n;}
+    public Notification getDynamicNotification() { return mDynamicNotification; }
+
+    public void saveToDB(Context context) {
+        DBHelper.getInstance(context).updateCity(this);
+
+        if (mDynamicNotification != null)
+            DBHelper.getInstance(context).updateNotification(mDynamicNotification);
+    }
 }
