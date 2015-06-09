@@ -71,7 +71,8 @@ public class City {
             parseXML(context);
         }
 
-        mCityList = DBHelper.getInstance(context).getCities();
+        if (mCityList == null)
+            mCityList = DBHelper.getInstance(context).getCities();
     }
 
     public static ArrayList<City> getCitiesArray() {

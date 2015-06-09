@@ -8,6 +8,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -16,9 +19,7 @@ import android.widget.Toast;
 
 import java.text.DecimalFormat;
 import java.text.FieldPosition;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.Formatter;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
@@ -134,6 +135,8 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -157,13 +160,19 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onResume() {
         super.onResume();
-
         int cityId = getArguments().getInt("id");
         mCity = City.getCity(cityId);
         MainActivity activity = (MainActivity) getActivity();
         activity.getToolbar().setTitle(mCity.getName());
 
         handleCity();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.city_settings_menu, menu);
+        MenuItem item = menu.findItem(R.id.city_settings);
+        item.setVisible(true);
     }
 
     @Override
