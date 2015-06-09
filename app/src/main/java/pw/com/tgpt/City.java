@@ -311,7 +311,12 @@ public class City {
     }
 
     public void setDynamicNotification(Notification n) { mDynamicNotification = n;}
-    public Notification getDynamicNotification() { return mDynamicNotification; }
+    public Notification getDynamicNotification() {
+        if (mDynamicNotification == null) {
+            mDynamicNotification = new Notification(this, false);
+        }
+        return mDynamicNotification;
+    }
 
     public void saveToDB(Context context) {
         DBHelper.getInstance(context).updateCity(this);

@@ -210,7 +210,9 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         MenuItem citySettings = menu.findItem(R.id.city_settings);
         MenuItem cityStarred = menu.findItem(R.id.city_starred);
 
+        citySettings.setChecked(mCity.getDynamicNotification().getDynamic());
         citySettings.setOnMenuItemClickListener(this);
+
         cityStarred.setIcon(starResId);
         cityStarred.setOnMenuItemClickListener(this);
     }
@@ -233,6 +235,9 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         boolean result = false;
         switch (item.getItemId()) {
             case R.id.city_settings:
+                boolean toggle = !mCity.getDynamicNotification().getDynamic();
+                mCity.getDynamicNotification().setDynamic(toggle);
+                item.setChecked(toggle);
                 result = true;
                 break;
             case R.id.city_starred:
