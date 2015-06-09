@@ -147,8 +147,9 @@ public class DBHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = getWritableDatabase();
             try {
                 Log.v(TAG, "Notification " + n.getID() + " beginning update");
+                db.beginTransaction();
                 ContentValues values = new ContentValues();
-
+                values.put(Notifications.COLUMN_NAME_DYNAMIC, n.getDynamic());
                 if (db.update(Notifications.TABLE_NAME, values, Notifications.COLUMN_NAME_ID + "=" + n.getID(), null) == 1) {
                     db.setTransactionSuccessful();
                     Log.v(TAG, "Notification " + n.getID() + " update successful");
@@ -164,7 +165,7 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         try {
             Log.v(TAG, "Notification " + n.getID() + " beginning delete");
-
+            db.beginTransaction();
             if (db.delete(Notifications.TABLE_NAME, Notifications.COLUMN_NAME_ID + "=" + n.getID(), null) == 1) {
                 db.setTransactionSuccessful();
                 Log.v(TAG, "Notification " + n.getID() + " delete successful");
@@ -242,6 +243,11 @@ public class DBHelper extends SQLiteOpenHelper {
                     city.setCurrentDate(currentDate);
                 }
 
+                ArrayList<Notification> notifications = getNotifications(city);
+                if (!notifications.isEmpty()) {
+                    city.setDynamicNotification(notifications.get(0));
+                }
+
                 cities.add(city);
             } while (c.moveToNext());
         }
@@ -269,12 +275,10 @@ public class DBHelper extends SQLiteOpenHelper {
                 boolean isDynamic = c.getInt(c.getColumnIndex(Notifications.COLUMN_NAME_DYNAMIC)) != 0;
 
                 Notification n = new Notification(id, city, isDynamic);
+                Log.v(TAG, "Notification " + id + " for " + city.getName() + " found");
                 notifications.add(n);
             } while (c.moveToNext());
         }
-
-        if (notifications.isEmpty())
-            notifications = null;
 
         return notifications;
     }

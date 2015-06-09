@@ -137,11 +137,14 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     private class PersistDataTask extends AsyncTask<City, Void, Void> {
+        private Context mContext;
+
+        public PersistDataTask(Context context) { mContext = context; }
         @Override
         protected Void doInBackground(City... params) {
             City city = params[0];
             if (city != null) {
-                city.saveToDB(getActivity());
+                city.saveToDB(mContext);
             }
             return null;
         }
@@ -199,7 +202,7 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onPause() {
         super.onPause();
 
-        new PersistDataTask().execute(mCity);
+        new PersistDataTask(getActivity()).execute(mCity);
     }
 
     @Override
