@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,10 +30,13 @@ public class StarredFragment extends ListFragment implements AdapterView.OnItemC
         MenuItemCompat.OnActionExpandListener {
     private static final String TAG = "SFR";
     private AutoCompleteTextView mSearchView;
+    private SwipeRefreshLayout mSwipeLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.starred_fragment, container, false);
+        mSwipeLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_container);
+
         setHasOptionsMenu(true);
         return v;
     }
@@ -43,6 +47,12 @@ public class StarredFragment extends ListFragment implements AdapterView.OnItemC
 
         MainActivity activity = (MainActivity) getActivity();
         activity.getToolbar().setTitle(getResources().getString(R.string.tgpt_prices));
+        try {
+            activity.getInitDataTask().get(10, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            Log.e(TAG, "initDataTask failed");
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -52,26 +62,16 @@ public class StarredFragment extends ListFragment implements AdapterView.OnItemC
         MenuItem item = menu.findItem(R.id.city_search);
         MenuItemCompat.setOnActionExpandListener(item, this);
         item.setVisible(true);
+
         mSearchView = (AutoCompleteTextView) item.getActionView().findViewById(R.id.search_autocomplete);
         if (mSearchView != null) {
             mSearchView.setOnItemClickListener(this);
             mSearchView.setSelectAllOnFocus(true);
             mSearchView.setThreshold(1);
-            try {
-                MainActivity activity = (MainActivity) getActivity();
-                activity.getInitDataTask().get(5, TimeUnit.SECONDS);
-                ArrayList<City> list = new ArrayList<City>(City.getCitiesArray().values());
-                ArrayAdapter<City> adapter = new ArrayAdapter<City>(getActivity(), R.layout.city_autocomplete_search_item, list);
-                mSearchView.setAdapter(adapter);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (TimeoutException e) {
-                e.printStackTrace();
-            }
-            finally {
-            }
+
+            ArrayList<City> list = new ArrayList<City>(City.getCitiesArray().values());
+            ArrayAdapter<City> adapter = new ArrayAdapter<City>(getActivity(), R.layout.city_autocomplete_search_item, list);
+            mSearchView.setAdapter(adapter);
         }
     }
 
