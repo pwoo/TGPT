@@ -96,6 +96,8 @@ public class PushUpdateService extends IntentService {
                     Log.v(TAG, "savedCity: " + savedCity.getLastUpdate().toString());
                     if (lastNotify != null)
                         Log.v(TAG, "lastDate: " + lastNotify.toString());
+                    else
+                        Log.v(TAG, "lastNotify == NULL");
                 }
 
                 if (sendNotification) {

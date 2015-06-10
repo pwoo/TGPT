@@ -134,9 +134,10 @@ public class DBHelper extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
             values.put(Notifications.COLUMN_NAME_CITY_ID, n.getCity().getID());
             values.put(Notifications.COLUMN_NAME_DYNAMIC, n.getDynamic());
-            if (n.getLastNotify() != null)
+            if (n.getLastNotify() != null) {
                 values.put(Notifications.COLUMN_NAME_LAST_NOTIFY, formatDate(n.getLastNotify()));
-
+                Log.v(TAG, formatDate(n.getLastNotify()));
+            }
             if ((key = db.insert(Notifications.TABLE_NAME, null, values)) != -1) {
                 db.setTransactionSuccessful();
                 n.setID(key);
@@ -157,8 +158,10 @@ public class DBHelper extends SQLiteOpenHelper {
                 db.beginTransaction();
                 ContentValues values = new ContentValues();
                 values.put(Notifications.COLUMN_NAME_DYNAMIC, n.getDynamic());
-                if (n.getLastNotify() != null)
+                if (n.getLastNotify() != null) {
                     values.put(Notifications.COLUMN_NAME_LAST_NOTIFY, formatDate(n.getLastNotify()));
+                    Log.v(TAG, formatDate(n.getLastNotify()));
+                }
                 if (db.update(Notifications.TABLE_NAME, values, Notifications.COLUMN_NAME_ID + "=" + n.getID(), null) == 1) {
                     db.setTransactionSuccessful();
                     Log.v(TAG, "Notification " + n.getID() + " update successful");
@@ -255,6 +258,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 cities.put(city.getID(), city);
             } while (c.moveToNext());
         }
+        c.close();
 
         return cities;
     }
@@ -277,12 +281,19 @@ public class DBHelper extends SQLiteOpenHelper {
                 long id = c.getInt(c.getColumnIndex(Notifications.COLUMN_NAME_ID));
                 int cityId = c.getInt(c.getColumnIndex(Notifications.COLUMN_NAME_CITY_ID));
                 boolean isDynamic = c.getInt(c.getColumnIndex(Notifications.COLUMN_NAME_DYNAMIC)) != 0;
+                String lastNotify = c.getString(c.getColumnIndex(Notifications.COLUMN_NAME_LAST_NOTIFY));
 
                 Notification n = new Notification(id, city, isDynamic);
+                if (lastNotify != null) {
+                    Calendar lastUpdate = formatDate(lastNotify);
+                    n.setLastNotify(lastUpdate);
+                }
+
                 Log.v(TAG, "Notification " + id + " for " + city.getName() + " found");
                 notifications.add(n);
             } while (c.moveToNext());
         }
+        c.close();
 
         return notifications;
     }

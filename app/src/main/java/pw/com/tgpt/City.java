@@ -183,11 +183,16 @@ public class City {
 
         setRegularPrice(parser.getDouble(appContext.getString(R.string.tgpt_regular_price)));
         setRegularDiff(parser.getDouble(appContext.getString(R.string.tgpt_regular_diff)));
-        setLastWeekRegular(parser.getDouble(appContext.getString(R.string.tgpt_last_week_regular)));
-        setLastMonthRegular(parser.getDouble(appContext.getString(R.string.tgpt_last_week_regular)));
-        setLastYearRegular(parser.getDouble(appContext.getString(R.string.tgpt_last_year_regular)));
-
         String temp = parser.getString("regulardirection");
+        try {
+            setLastWeekRegular(parser.getDouble(appContext.getString(R.string.tgpt_last_week_regular)));
+            setLastMonthRegular(parser.getDouble(appContext.getString(R.string.tgpt_last_week_regular)));
+            setLastYearRegular(parser.getDouble(appContext.getString(R.string.tgpt_last_year_regular)));
+        }
+        catch (JSONException e) {
+            // Do nothing -- these are considered low priority to display to the end user
+        }
+
         Direction direction = Direction.NO_CHANGE;
         if (temp.equals("+")) {
             direction = Direction.UP;
