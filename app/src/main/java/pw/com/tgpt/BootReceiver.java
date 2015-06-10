@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import java.util.HashSet;
+
 public class BootReceiver extends BroadcastReceiver {
     private static final String TAG = "RECV";
 
@@ -15,8 +17,16 @@ public class BootReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        // TODO: Read Serialized values, place in Parcelable and put into Intent
         Log.d(TAG, "Boot message received!");
-        // http://stackoverflow.com/a/5228494 (What exactly does using the Application Context mean?)
+        City.init(context);
+        HashSet<Notification> dynamicNotifications = Notification.getDynamicNotifications();
+        if (!dynamicNotifications.isEmpty()) {
+            for (Notification n : dynamicNotifications) {
+                Intent i = new Intent(context, PushUpdateService.class);
+                i.setAction(PushUpdateService.ACTION_CREATE_DYNAMIC_NOTIFICATION);
+                i.putExtra(PushUpdateService.EXTRA_CITY_ID, n.getCity().getID());
+                context.startService(i);
+            }
+        }
     }
 }

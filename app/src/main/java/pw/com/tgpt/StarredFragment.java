@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -59,8 +60,8 @@ public class StarredFragment extends ListFragment implements AdapterView.OnItemC
             try {
                 MainActivity activity = (MainActivity) getActivity();
                 activity.getInitDataTask().get(5, TimeUnit.SECONDS);
-
-                ArrayAdapter<City> adapter = new ArrayAdapter<City>(getActivity(), R.layout.city_autocomplete_search_item, City.getCitiesArray());
+                ArrayList<City> list = new ArrayList<City>(City.getCitiesArray().values());
+                ArrayAdapter<City> adapter = new ArrayAdapter<City>(getActivity(), R.layout.city_autocomplete_search_item, list);
                 mSearchView.setAdapter(adapter);
             } catch (InterruptedException e) {
                 e.printStackTrace();

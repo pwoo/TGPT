@@ -1,6 +1,7 @@
 package pw.com.tgpt;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -36,7 +37,7 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private TextView mLastYear;
     private ImageView mDirection;
     private TextView mCurrentDate;
-
+    private UpdateCityTask mUpdateCityTask;
     private City mCity;
     private Notification mDynamicNotification;
 
@@ -206,6 +207,13 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        mUpdateCityTask.cancel(true);
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         int starResId = mCity.getStarred()? R.drawable.ic_star_24dp : R.drawable.ic_star_border_black_24dp;
 
@@ -228,8 +236,8 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     public void handleCity() {
         if (mCity != null) {
-            UpdateCityTask updateTask = new UpdateCityTask(getActivity());
-            updateTask.execute(mCity);
+            mUpdateCityTask = new UpdateCityTask(getActivity());
+            mUpdateCityTask.execute(mCity);
         }
     }
 
@@ -238,9 +246,7 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         boolean result = false;
         switch (item.getItemId()) {
             case R.id.city_settings:
-                boolean toggle = !mCity.getDynamicNotification().getDynamic();
-                mCity.getDynamicNotification().setDynamic(toggle);
-                item.setChecked(toggle);
+                toggleDynamicNotifications(item);
                 result = true;
                 break;
             case R.id.city_starred:
@@ -257,5 +263,21 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         int starResId = toggle? R.drawable.ic_star_24dp : R.drawable.ic_star_border_black_24dp;
         mCity.setStarred(toggle);
         item.setIcon(starResId);
+    }
+
+    public void toggleDynamicNotifications(MenuItem item) {
+        mCity.getDynamicNotification().setLastNotify(mCity.getLastUpdate());
+
+        boolean toggle = !mCity.getDynamicNotification().getDynamic();
+        mCity.getDynamicNotification().setDynamic(toggle);
+        item.setChecked(toggle);
+
+        Intent intent = new Intent(getActivity(), PushUpdateService.class);
+        intent.putExtra(PushUpdateService.EXTRA_CITY_ID, mCity.getID());
+        if (toggle)
+            intent.setAction(PushUpdateService.ACTION_CREATE_DYNAMIC_NOTIFICATION);
+        else
+            intent.setAction(PushUpdateService.ACTION_CANCEL_DYNAMIC_NOTIFICATION);
+        getActivity().startService(intent);
     }
 }

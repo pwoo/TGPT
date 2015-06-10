@@ -20,17 +20,16 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
+import java.util.HashMap;
 
 /**
  * Created by PW on 2015-04-26.
  */
 public class City {
     private static final String TAG = "CITY";
-    private static ArrayList<City> mCityList;
+    private static HashMap<Integer, City> mCityList;
 
     private int mID;
     private String mName;
@@ -78,7 +77,7 @@ public class City {
             mCityList = DBHelper.getInstance(context).getCities();
     }
 
-    public static ArrayList<City> getCitiesArray() {
+    public static HashMap<Integer, City> getCitiesArray() {
         return mCityList;
     }
 
@@ -87,12 +86,7 @@ public class City {
             Log.w(TAG, "City class uninitialized!");
         }
 
-        for (City c : mCityList) {
-            if (c.getID() == id) {
-                return c;
-            }
-        }
-        return null;
+        return mCityList.get(id);
     }
 
     private City() {
