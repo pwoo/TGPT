@@ -209,8 +209,8 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
-        mUpdateCityTask.cancel(true);
+        if (mUpdateCityTask != null)
+            mUpdateCityTask.cancel(true);
     }
 
     @Override
