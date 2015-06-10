@@ -129,6 +129,7 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         try {
             long key = -1;
+            Log.v(TAG, "Notification " + n.getID() + " beginning insert");
             db.beginTransaction();
             ContentValues values = new ContentValues();
             values.put(Notifications.COLUMN_NAME_CITY_ID, n.getCity().getID());
@@ -138,6 +139,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
             if ((key = db.insert(Notifications.TABLE_NAME, null, values)) != -1) {
                 db.setTransactionSuccessful();
+                n.setID(key);
+                Log.v(TAG, "Notification " + n.getID() + " insert successful");
                 n.setID(key);
             }
         }
