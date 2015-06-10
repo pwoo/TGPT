@@ -111,7 +111,6 @@ public class PushUpdateService extends IntentService {
 
                     n.setContentTitle(title.toString());
                     n.setColor(getResources().getColor(R.color.dodger_blue));
-                    n.setGroup(GROUP_KEY_NOTIFICATIONS);
 
                     // Create content text
                     StringBuilder text = new StringBuilder("Price is ");
