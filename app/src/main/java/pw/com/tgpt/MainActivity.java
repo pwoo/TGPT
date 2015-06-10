@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mInitDataTask = new InitDataTask();
         mInitDataTask.execute(this);
 
-        handleIntent(getIntent());
+        initStarredFragment();
     }
 
     @Override
@@ -73,11 +73,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (mInitDataTask != null)
             mInitDataTask.cancel(true);
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        handleIntent(intent);
     }
 
     @Override
@@ -141,14 +136,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void handleIntent(Intent intent) {
-        switch (intent.getAction()) {
-            default:
-                initStarredFragment();
-                break;
-        }
     }
 
     public ActionBar getToolbar() {
