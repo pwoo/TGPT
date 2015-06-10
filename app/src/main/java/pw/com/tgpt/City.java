@@ -129,7 +129,7 @@ public class City {
                 parser.next();
             }
         } catch (XmlPullParserException | IOException e) {
-            // TODO
+            Log.e(TAG, "Error parsing cities");
         }
         finally {
             if (parser != null) {
@@ -237,8 +237,6 @@ public class City {
     }
 
     public void setRegularPrice(double regularPrice) {
-        Log.v(TAG, getName() + ", old mRegularPrice: " + this.mRegularPrice
-                + ", new mRegularPrice: " + regularPrice);
         this.mRegularPrice = regularPrice;
     }
 
@@ -247,8 +245,6 @@ public class City {
     }
 
     public void setRegularDiff(double mRegularDiff) {
-        Log.v(TAG, getName() + ", old mRegularDiff: " + this.mRegularDiff
-                + ", new mRegularDiff: " + mRegularDiff);
         this.mRegularDiff = mRegularDiff;
     }
 
@@ -257,8 +253,6 @@ public class City {
     }
 
     public void setLastWeekRegular(double mLastWeekRegular) {
-        Log.v(TAG, getName() + ", old mLastWeekRegular: " + this.mLastWeekRegular
-                + ", new mLastWeekRegular: " + mLastWeekRegular);
         this.mLastWeekRegular = mLastWeekRegular;
     }
 

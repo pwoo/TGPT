@@ -115,9 +115,10 @@ public class DBHelper extends SQLiteOpenHelper {
             values.put(CityEntry.COLUMN_NAME_CITY_ID, id);
             values.put(CityEntry.COLUMN_NAME_CITY_NAME, name);
             if (db.insert(CityEntry.TABLE_NAME, null, values) != -1) {
-                Log.v(TAG, "City " + name + " inserted");
                 db.setTransactionSuccessful();
             }
+            else
+                Log.e(TAG, "Error inserting " + name + "@" + id);
         }
         finally {
             db.endTransaction();
