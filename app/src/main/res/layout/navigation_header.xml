@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/header">
+
+    <TextView android:id="@+id/nav_header_title"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:text="@string/app_name"
+        android:textColor="@color/white"
+        android:textSize="22dp"
+        android:layout_alignParentBottom="true"/>
+</RelativeLayout>
