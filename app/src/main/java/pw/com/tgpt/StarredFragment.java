@@ -34,6 +34,7 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
     private SwipeRefreshLayout mSwipeLayout;
     private ArrayList<City> mStarredCities;
     private InitStarredFragmentTask mInitStarredFragment;
+    private UpdateStarredFragmentTask mUpdateStarredFragment;
 
     private class InitStarredFragmentTask extends AsyncTask<Void, Void, Void> {
         private Context mContext;
@@ -45,10 +46,7 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
         @Override
         protected Void doInBackground(Void... params) {
             mStarredCities = DBHelper.getInstance(mContext).getStarredCities();
-            // TODO: Toast on error
-            for (City city : mStarredCities) {
-                city.updateTGPTData(mContext);
-            }
+
             return null;
         }
 
@@ -139,6 +137,9 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
             mActivity.getInitDataTask().get(10, TimeUnit.SECONDS);
             mInitStarredFragment = new InitStarredFragmentTask(mActivity);
             mInitStarredFragment.execute();
+            mInitStarredFragment.get(10, TimeUnit.SECONDS);
+            mUpdateStarredFragment = new UpdateStarredFragmentTask(mActivity);
+            mUpdateStarredFragment.execute();
         } catch (Exception e) {
             Log.e(TAG, "initDataTask failed");
             e.printStackTrace();
@@ -229,8 +230,9 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
     @Override
     public void onRefresh() {
         Log.v(TAG, "Refresh triggered");
-        if (mInitStarredFragment.getStatus() == AsyncTask.Status.FINISHED) {
-            new UpdateStarredFragmentTask(mActivity).execute();
+        if (mUpdateStarredFragment != null && mUpdateStarredFragment.getStatus() == AsyncTask.Status.FINISHED) {
+            mUpdateStarredFragment = new UpdateStarredFragmentTask(mActivity);
+            mUpdateStarredFragment.execute();
         }
         else
             mSwipeLayout.setRefreshing(false);

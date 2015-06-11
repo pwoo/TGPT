@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
 import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -95,7 +96,7 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
             int color;
             int directionRes;
-            int regularDiff = (int) mCity.getRegularDiff();
+            double regularDiff = mCity.getRegularDiff();
             switch (mCity.getDirection()) {
                 case UP:
                     color = mContext.getResources().getColor(android.R.color.holo_red_light);
@@ -116,10 +117,11 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
 
             if (regularDiff != 0) {
+                DecimalFormat decimalFormatter = new DecimalFormat(getResources().getString(R.string.decimal_format));
                 int labelResId = (regularDiff > 1 || regularDiff < -1)? R.string.units : R.string.unit;
                 mRegularDiffLabel.setText(getResources().getString(labelResId));
                 mRegularDiff.setTextColor(color);
-                mRegularDiff.setText(new Integer(regularDiff).toString());
+                mRegularDiff.setText(decimalFormatter.format(regularDiff));
             }
 
             mLastWeek.setText(new Double(mCity.getLastWeekRegular()).toString());

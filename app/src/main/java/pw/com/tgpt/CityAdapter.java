@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
@@ -39,6 +40,8 @@ public class CityAdapter extends ArrayAdapter<City> {
         } else {
             view = convertView;
         }
+
+        DecimalFormat decimalFormatter = new DecimalFormat(view.getResources().getString(R.string.decimal_format));
         name = (TextView) view.findViewById(R.id.starred_city_name);
         name.setText(city.getName());
 
@@ -46,7 +49,6 @@ public class CityAdapter extends ArrayAdapter<City> {
         regularPrice.setText(new Double(city.getRegularPrice()).toString());
 
         regularDiff = (TextView) view.findViewById(R.id.starred_city_reg_diff);
-
 
         switch (city.getDirection()) {
             case UP:
@@ -61,7 +63,7 @@ public class CityAdapter extends ArrayAdapter<City> {
                 regularDiff.setBackgroundResource(R.color.light_grey);
                 break;
         }
-        displayDiff.append((int)city.getRegularDiff());
+        displayDiff.append(decimalFormatter.format(city.getRegularDiff()));
         regularDiff.setText(displayDiff.toString());
 
         return view;

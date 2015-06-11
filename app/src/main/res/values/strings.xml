@@ -11,7 +11,7 @@
     <string name="unit">cent\n/litre</string>
     <string name="units">cents\n/litre</string>
     <string name="json_url">http://tomorrowsgaspricetoday.com/feed-mobile-jsonout.php?city=</string>
-
+    <string name="decimal_format">##0.0#</string>
     <string name="tgpt_prices">Home</string>
     <string name="tgpt_settings">Settings</string>
 

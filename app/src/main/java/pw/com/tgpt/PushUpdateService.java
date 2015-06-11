@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -115,6 +116,7 @@ public class PushUpdateService extends IntentService {
                     n.setColor(getResources().getColor(R.color.dodger_blue));
 
                     // Create content text
+                    DecimalFormat decimalFormatter = new DecimalFormat(getResources().getString(R.string.decimal_format));
                     StringBuilder text = new StringBuilder("Price is ");
                     text.append(savedCity.getRegularPrice());
                     text.append(", ");
@@ -122,7 +124,7 @@ public class PushUpdateService extends IntentService {
                         text.append("going ")
                         .append(savedCity.getDirection().toString().toLowerCase())
                         .append(" ")
-                        .append(savedCity.getRegularDiff())
+                        .append(decimalFormatter.format(savedCity.getRegularDiff()))
                         .append(" cents");
                     }
                     else
