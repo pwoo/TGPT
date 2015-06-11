@@ -139,7 +139,6 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
             mActivity.getInitDataTask().get(10, TimeUnit.SECONDS);
             mInitStarredFragment = new InitStarredFragmentTask(mActivity);
             mInitStarredFragment.execute();
-            mInitStarredFragment.get(10, TimeUnit.SECONDS);
         } catch (Exception e) {
             Log.e(TAG, "initDataTask failed");
             e.printStackTrace();
