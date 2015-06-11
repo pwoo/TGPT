@@ -6,6 +6,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -82,8 +84,13 @@ public class PushUpdateService extends IntentService {
         String action = intent.getAction();
         Log.v(TAG, "handleActionNotification(" + action + ")");
 
-        final City savedCity = City.getCity(intent.getIntExtra(EXTRA_CITY_ID, -1));
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean disableNotifications = prefs.getBoolean(getResources().getString(R.string.setting_disable_notifications), false);
+        Log.v(TAG, "disableNotifications: " + disableNotifications);
+        if (disableNotifications)
+            return;
 
+        final City savedCity = City.getCity(intent.getIntExtra(EXTRA_CITY_ID, -1));
         if (savedCity != null) {
             Notification notification = savedCity.getDynamicNotification();
             if (savedCity.updateTGPTData(this)) {

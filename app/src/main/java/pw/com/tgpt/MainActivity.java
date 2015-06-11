@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -115,14 +116,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         menuItem.setChecked(true);
-
+        Fragment fragment = null;
         switch (menuItem.getItemId()) {
             case R.id.prices:
-                StarredFragment fragment = new StarredFragment();
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, fragment).addToBackStack(null).commit();
+                fragment = new StarredFragment();
                 break;
             case R.id.settings:
+                fragment = new SettingsFragment();
                 break;
+        }
+        if (fragment != null) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, fragment).addToBackStack(null).commit();
         }
 
         mDrawerLayout.closeDrawer(mNavigationView);

@@ -3,7 +3,8 @@
     <string name="search_title">City</string>
     <string name="search_hint">City</string>
     <string name="regular_price">Regular Price</string>
-    <string name="update_failed">Update Failed</string>
+    <string name="update_failed">Update failed</string>
+    <string name="setting_disable_notifications">noti_disable</string>
     <string name="last_week">Last Week</string>
     <string name="last_month">Last Month</string>
     <string name="last_year">Last Year</string>

@@ -93,6 +93,7 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
             for (City city : mStarredCities) {
                 if (city.updateTGPTData(mContext)) {
                     city.getDynamicNotification().setLastNotify(city.getLastUpdate());
+                    city.saveToDB(mContext);
                 }
             }
 
@@ -142,17 +143,6 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
-        if (mInitStarredFragment != null)
-            mInitStarredFragment.cancel(true);
-
-        if (mUpdateStarredFragment != null)
-            mUpdateStarredFragment.cancel(true);
-    }
-
-    @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
 
@@ -185,8 +175,11 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
         super.onPause();
         mSwipeLayout.setRefreshing(false);
 
-        for (City city : mStarredCities)
-            city.saveToDB(mActivity);
+        if (mInitStarredFragment != null)
+            mInitStarredFragment.cancel(true);
+
+        if (mUpdateStarredFragment != null)
+            mUpdateStarredFragment.cancel(true);
     }
 
     @Override

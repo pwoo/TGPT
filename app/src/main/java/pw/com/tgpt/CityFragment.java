@@ -226,16 +226,12 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onPause() {
         super.onPause();
-
-        new PersistDataTask(mActivity).execute(mCity);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+        Log.v(TAG, "onPause");
         mSwipeLayout.setRefreshing(false);
         if (mUpdateCityTask != null)
             mUpdateCityTask.cancel(true);
+
+        new PersistDataTask(mActivity).execute(mCity);
     }
 
     @Override

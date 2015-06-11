@@ -2,39 +2,22 @@ package pw.com.tgpt;
 
 import android.app.Activity;
 import android.app.ListFragment;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.Switch;
 
-/**
- * A fragment representing a list of Items.
- * <p/>
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
- * interface.
- */
-public class SettingsFragment extends ListFragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private OnFragmentInteractionListener mListener;
-
-    // TODO: Rename and change types of parameters
-    public static SettingsFragment newInstance(String param1, String param2) {
-        SettingsFragment fragment = new SettingsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+public class SettingsFragment extends Fragment implements android.widget.CompoundButton.OnCheckedChangeListener {
+    MainActivity mActivity;
+    Switch mSwitch;
+    boolean mDisableNotifications = false;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -47,59 +30,58 @@ public class SettingsFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+    }
 
-        // TODO: Change Adapter to display your content
-//        setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
-//                android.R.layout.simple_list_item_1, android.R.id.text1, DummyContent.ITEMS));
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.settings_fragment, container, false);
+
+        mSwitch = (Switch) v.findViewById(R.id.settings_disable_notifications_toggle);
+        mSwitch.setOnCheckedChangeListener(this);
+        mSwitch.setChecked(mDisableNotifications);
+
+        return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mActivity.getSupportActionBar().setTitle(getResources().getString(R.string.tgpt_settings));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mActivity);
+        SharedPreferences.Editor prefEditor = pref.edit();
+        prefEditor.putBoolean(getResources().getString(R.string.setting_disable_notifications), mDisableNotifications);
+        prefEditor.commit();
     }
 
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+
+        mActivity = (MainActivity) activity;
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mActivity);
+        mDisableNotifications = pref.getBoolean(getResources().getString(R.string.setting_disable_notifications), false);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
-
 
     @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
-
-        if (null != mListener) {
-            // Notify the active callbacks interface (the activity, if the
-            // fragment is attached to one) that an item has been selected.
-//            mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        switch (buttonView.getId()) {
+            case R.id.settings_disable_notifications_toggle:
+                mDisableNotifications = isChecked;
+                break;
         }
     }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(String id);
-    }
-
 }
