@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -33,6 +34,7 @@ public class CityAdapter extends ArrayAdapter<City> {
         TextView name;
         TextView regularPrice;
         TextView regularDiff;
+        TextView lastUpdate;
         StringBuilder displayDiff = new StringBuilder();
 
         if (convertView == null) {
@@ -40,7 +42,7 @@ public class CityAdapter extends ArrayAdapter<City> {
         } else {
             view = convertView;
         }
-
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE MM/yy");
         DecimalFormat decimalFormatter = new DecimalFormat(view.getResources().getString(R.string.decimal_format));
         name = (TextView) view.findViewById(R.id.starred_city_name);
         name.setText(city.getName());
@@ -66,6 +68,10 @@ public class CityAdapter extends ArrayAdapter<City> {
         displayDiff.append(decimalFormatter.format(city.getRegularDiff()));
         regularDiff.setText(displayDiff.toString());
 
+        if (city.getLastUpdate() != null) {
+            lastUpdate = (TextView) view.findViewById(R.id.starred_city_date);
+            lastUpdate.setText(dateFormatter.format(city.getLastUpdate().getTime()));
+        }
         return view;
     }
 
