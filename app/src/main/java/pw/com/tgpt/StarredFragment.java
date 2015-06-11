@@ -150,6 +150,7 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
     @Override
     public void onPause() {
         super.onPause();
+        mSwipeLayout.setRefreshing(false);
 
         for (City city : mStarredCities)
             city.saveToDB(mActivity);
