@@ -46,17 +46,35 @@ public class City {
     private boolean mStarred = false;
 
     public enum Direction {
-        UP("Up"),
-        DOWN("Down"),
-        NO_CHANGE("No change");
+        UP("Up", 2),
+        DOWN("Down", 1),
+        NO_CHANGE("No change", 0);
 
         private final String desc;
-        private Direction(String value) {
+        private final int id;
+        private Direction(String value, int id) {
             desc = value;
+            this.id = id;
         }
 
         public String toString() {
             return desc;
+        }
+        public int toInt() { return id; }
+        public static Direction toDirection(int id) {
+            Direction dir = NO_CHANGE;
+            switch (id) {
+                case 0:
+                    dir = NO_CHANGE;
+                    break;
+                case 1:
+                    dir = DOWN;
+                    break;
+                case 2:
+                    dir = UP;
+                    break;
+            }
+            return dir;
         }
     }
 

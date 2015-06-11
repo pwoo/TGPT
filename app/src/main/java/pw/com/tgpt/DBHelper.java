@@ -31,6 +31,7 @@ public class DBHelper extends SQLiteOpenHelper {
         public static final String COLUMN_NAME_CITY_NAME = "CITYNAME";
         public static final String COLUMN_NAME_REGULAR_PRICE = "REGPRICE";
         public static final String COLUMN_NAME_REGULAR_DIFF = "REGDIFF";
+        public static final String COLUMN_NAME_REGULAR_DIRECTION = "REGDIR";
         public static final String COLUMN_NAME_LAST_WEEK_REGULAR = "LASTWKREG";
         public static final String COLUMN_NAME_LAST_MONTH_REGULAR = "LASTMTHREG";
         public static final String COLUMN_NAME_LAST_YR_REGULAR = "LASTYRREG";
@@ -56,6 +57,7 @@ public class DBHelper extends SQLiteOpenHelper {
             .append(CityEntry.COLUMN_NAME_CITY_NAME).append(" TEXT NOT NULL,")
             .append(CityEntry.COLUMN_NAME_REGULAR_PRICE).append(" REAL DEFAULT 0,")
             .append(CityEntry.COLUMN_NAME_REGULAR_DIFF).append(" REAL DEFAULT 0,")
+            .append(CityEntry.COLUMN_NAME_REGULAR_DIRECTION).append(" INTEGER DEFAULT 0,")
             .append(CityEntry.COLUMN_NAME_LAST_WEEK_REGULAR).append(" REAL DEFAULT 0,")
             .append(CityEntry.COLUMN_NAME_LAST_MONTH_REGULAR).append(" REAL DEFAULT 0,")
             .append(CityEntry.COLUMN_NAME_LAST_YR_REGULAR).append(" REAL DEFAULT 0,")
@@ -206,7 +208,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 values.put(CityEntry.COLUMN_NAME_LAST_UPDATE, formatDate(city.getLastUpdate()));
             values.put(CityEntry.COLUMN_NAME_ENABLED, city.getEnabled());
             values.put(CityEntry.COLUMN_NAME_STARRED, city.getStarred());
-
+            values.put(CityEntry.COLUMN_NAME_REGULAR_DIRECTION, city.getDirection().toInt());
             if (db.update(CityEntry.TABLE_NAME, values, CityEntry.COLUMN_NAME_CITY_ID + "=" + city.getID(), null) == 1) {
                 db.setTransactionSuccessful();
                 Log.v(TAG, "City " + city.getName() + " update successful");
@@ -236,7 +238,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 city.setLastYearRegular(c.getDouble(c.getColumnIndex(CityEntry.COLUMN_NAME_LAST_YR_REGULAR)));
                 city.setEnabled(c.getInt(c.getColumnIndex(CityEntry.COLUMN_NAME_ENABLED)) != 0);
                 city.setStarred(c.getInt(c.getColumnIndex(CityEntry.COLUMN_NAME_STARRED)) != 0);
-
                 String lastUpdateString = c.getString(c.getColumnIndex(CityEntry.COLUMN_NAME_LAST_UPDATE));
                 if (lastUpdateString != null) {
                     Calendar lastUpdate = formatDate(lastUpdateString);
@@ -248,6 +249,9 @@ public class DBHelper extends SQLiteOpenHelper {
                     Calendar currentDate = formatDate(currentDateString);
                     city.setCurrentDate(currentDate);
                 }
+
+                City.Direction dir = City.Direction.toDirection(c.getInt(c.getColumnIndex(CityEntry.COLUMN_NAME_REGULAR_DIRECTION)));
+                city.setDirection(dir);
 
                 ArrayList<Notification> notifications = getNotifications(city);
                 if (!notifications.isEmpty()) {
@@ -311,5 +315,33 @@ public class DBHelper extends SQLiteOpenHelper {
         Calendar currentDate = Calendar.getInstance();
         currentDate.setTime(dateFormatter.parse(aString, new ParsePosition(0)));
         return currentDate;
+    }
+
+    public ArrayList<City> getStarredCities() {
+        if (City.getCitiesArray() == null || City.getCitiesArray().isEmpty())
+            return null;
+
+        ArrayList<City> starredCities = new ArrayList<City>();
+        SQLiteDatabase db = getReadableDatabase();
+
+        StringBuilder query = new StringBuilder()
+                .append("SELECT * from ")
+                .append(CityEntry.TABLE_NAME)
+                .append(" WHERE ")
+                .append(CityEntry.COLUMN_NAME_STARRED)
+                .append("=1");
+
+        Cursor c = db.rawQuery(query.toString(), null);
+        if (c.moveToFirst()) {
+            do {
+                int id = c.getInt(c.getColumnIndex(CityEntry.COLUMN_NAME_CITY_ID));
+                City city = City.getCity(id);
+                if (city != null)
+                    starredCities.add(city);
+            } while (c.moveToNext());
+        }
+        c.close();
+
+        return starredCities;
     }
 }

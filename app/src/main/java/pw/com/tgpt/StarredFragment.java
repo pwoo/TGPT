@@ -1,6 +1,8 @@
 package pw.com.tgpt;
 
 import android.app.Activity;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.view.MenuItemCompat;
@@ -17,28 +19,108 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Created by pwoo on 08/06/15.
  */
-public class StarredFragment extends ListFragment implements AdapterView.OnItemClickListener,
+public class StarredFragment extends ListFragment implements SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener,
         MenuItemCompat.OnActionExpandListener {
     private static final String TAG = "SFR";
     private AutoCompleteTextView mSearchView;
     private SwipeRefreshLayout mSwipeLayout;
+    private ArrayList<City> mStarredCities;
+    private InitStarredFragmentTask mInitStarredFragment;
 
+    private class InitStarredFragmentTask extends AsyncTask<Void, Void, Void> {
+        private Context mContext;
+        public InitStarredFragmentTask(Context context) {
+            super();
+            mContext = context;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            mStarredCities = DBHelper.getInstance(mContext).getStarredCities();
+            // TODO: Toast on error
+            for (City city : mStarredCities) {
+                city.updateTGPTData(mContext);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            mSwipeLayout.setRefreshing(true);
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            mSwipeLayout.setRefreshing(false);
+            CityAdapter cityAdapter = new CityAdapter(mContext, mStarredCities);
+
+            setListAdapter(cityAdapter);
+            cityAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private class UpdateStarredFragmentTask extends AsyncTask<Void, Void, Void> {
+        private Context mContext;
+
+        public UpdateStarredFragmentTask(Context context) {
+            super();
+            mContext = context;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            for (City city : mStarredCities)
+                city.updateTGPTData(mContext);
+
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            mSwipeLayout.setRefreshing(true);
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            ((CityAdapter) getListAdapter()).notifyDataSetChanged();
+            mSwipeLayout.setRefreshing(false);
+        }
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.starred_fragment, container, false);
         mSwipeLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_container);
-
+        mSwipeLayout.setOnRefreshListener(this);
+        mSwipeLayout.setColorSchemeResources(android.R.color.holo_red_light, android.R.color.holo_green_light,
+                android.R.color.holo_blue_light);
         setHasOptionsMenu(true);
+
         return v;
+    }
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+
+        City city = (City) getListAdapter().getItem(position);
+        CityFragment cityFragment = CityFragment.newInstance(city.getID());
+
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, cityFragment).addToBackStack(null).commit();
     }
 
     @Override
@@ -49,10 +131,21 @@ public class StarredFragment extends ListFragment implements AdapterView.OnItemC
         activity.getToolbar().setTitle(getResources().getString(R.string.tgpt_prices));
         try {
             activity.getInitDataTask().get(10, TimeUnit.SECONDS);
+            mInitStarredFragment = new InitStarredFragmentTask(getActivity());
+            mInitStarredFragment.execute();
+            mInitStarredFragment.get(10, TimeUnit.SECONDS);
         } catch (Exception e) {
             Log.e(TAG, "initDataTask failed");
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        for (City city : mStarredCities)
+            city.saveToDB(getActivity());
     }
 
     @Override
@@ -127,5 +220,15 @@ public class StarredFragment extends ListFragment implements AdapterView.OnItemC
         CityFragment cityFragment = CityFragment.newInstance(city.getID());
 
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, cityFragment).addToBackStack(null).commit();
+    }
+
+    @Override
+    public void onRefresh() {
+        Log.v(TAG, "Refresh triggered");
+        if (mInitStarredFragment.getStatus() == AsyncTask.Status.FINISHED) {
+            new UpdateStarredFragmentTask(getActivity()).execute();
+        }
+        else
+            mSwipeLayout.setRefreshing(false);
     }
 }

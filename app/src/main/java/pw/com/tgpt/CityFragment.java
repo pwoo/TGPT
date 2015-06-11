@@ -47,6 +47,7 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         private int mDefaultColor;
 
         public UpdateCityTask(Context context) {
+            super();
             mContext = context;
         }
 
@@ -164,7 +165,8 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        if (savedInstanceState != null)
+            setArguments(savedInstanceState);
         setHasOptionsMenu(true);
     }
 
@@ -185,6 +187,8 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         mLastYear = (TextView) v.findViewById(R.id.city_fragment_last_year);
 
         mSwipeLayout.setOnRefreshListener(this);
+        mSwipeLayout.setColorSchemeResources(android.R.color.holo_red_light, android.R.color.holo_green_light,
+                android.R.color.holo_blue_light);
         return v;
     }
 
@@ -197,6 +201,13 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         activity.getToolbar().setTitle(mCity.getName());
 
         handleCity();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        Log.v(TAG, "onSaveInstanceState");
+        super.onSaveInstanceState(outState);
+        outState.putInt("cityID", mCity.getID());
     }
 
     @Override
@@ -230,7 +241,7 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onRefresh() {
-        Log.v("TAG", "Refresh triggered");
+        Log.v(TAG, "Refresh triggered");
         handleCity();
     }
 
