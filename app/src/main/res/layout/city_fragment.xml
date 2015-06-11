@@ -6,22 +6,22 @@
     <ScrollView
         android:layout_height="match_parent"
         android:layout_width="match_parent">
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <TextView android:id="@+id/city_fragment_last_update"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"/>
+                android:layout_height="wrap_content" />
 
-            <RelativeLayout
-                android:id="@+id/city_fragment_main_prices_layout"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/city_fragment_last_update">
+                android:orientation="horizontal">
+
                 <TextView android:id="@+id/city_fragment_regular_price"
-                    android:textSize="65sp"
+                    android:textSize="60sp"
                     android:textStyle="bold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -30,74 +30,62 @@
                 <ImageView android:id="@+id/city_fragment_direction"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_toRightOf="@id/city_fragment_regular_price"
-                    android:layout_centerVertical="true"
-                    android:paddingRight="10dp"
                     />
+
+                <TextView android:id="@+id/city_fragment_regular_diff"
+                    android:textSize="60sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
                 <TextView
                     android:id="@+id/city_fragment_regular_diff_label"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentRight="true"/>
-
-                <TextView android:id="@+id/city_fragment_regular_diff"
-                    android:textSize="65sp"
-                    android:paddingLeft="10dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@id/city_fragment_regular_diff_label" />
-
-            </RelativeLayout>
+                    android:gravity="center_vertical"/>
+            </LinearLayout>
 
             <TextView android:id="@+id/city_fragment_last_week_label"
                 android:text="@string/last_week"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/city_fragment_main_prices_layout"/>
+                android:layout_height="wrap_content" />
 
             <TextView android:id="@+id/city_fragment_last_week"
                 android:textSize="36sp"
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/city_fragment_last_week_label"
                 />
 
             <TextView android:id="@+id/city_fragment_last_month_label"
                 android:text="@string/last_month"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/city_fragment_last_week"/>
+                android:layout_height="wrap_content" />
 
             <TextView android:id="@+id/city_fragment_last_month"
                 android:textSize="36sp"
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/city_fragment_last_month_label"/>
+                android:layout_height="wrap_content" />
 
             <TextView android:id="@+id/city_fragment_last_year_label"
                 android:text="@string/last_year"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/city_fragment_last_month"/>
+                android:layout_height="wrap_content" />
 
             <TextView android:id="@+id/city_fragment_last_year"
                 android:textSize="36sp"
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/city_fragment_last_year_label"/>
-            
+                android:layout_height="wrap_content" />
+
             <TextView
                 android:id="@+id/city_fragment_current_date"
                 android:textSize="8sp"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/city_fragment_last_year"
-                android:layout_alignParentRight="true"/>
-        </RelativeLayout>
+                android:gravity="right"
+                />
+        </LinearLayout>
+
     </ScrollView>
 </android.support.v4.widget.SwipeRefreshLayout>

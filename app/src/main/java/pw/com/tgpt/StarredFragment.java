@@ -38,6 +38,8 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
 
     private class InitStarredFragmentTask extends AsyncTask<Void, Void, Void> {
         private Context mContext;
+        private boolean mIsCancelled = false;
+
         public InitStarredFragmentTask(Context context) {
             super();
             mContext = context;
@@ -62,15 +64,24 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
             super.onPostExecute(aVoid);
 
             mSwipeLayout.setRefreshing(false);
-            CityAdapter cityAdapter = new CityAdapter(mContext, mStarredCities);
+            if (!mIsCancelled) {
+                CityAdapter cityAdapter = new CityAdapter(mContext, mStarredCities);
 
-            setListAdapter(cityAdapter);
-            cityAdapter.notifyDataSetChanged();
+                setListAdapter(cityAdapter);
+                cityAdapter.notifyDataSetChanged();
+            }
+        }
+
+        @Override
+        protected void onCancelled(Void aVoid) {
+            super.onCancelled(aVoid);
+            mIsCancelled = true;
         }
     }
 
     private class UpdateStarredFragmentTask extends AsyncTask<Void, Void, Void> {
         private Context mContext;
+        private boolean mIsCancelled = false;
 
         public UpdateStarredFragmentTask(Context context) {
             super();
@@ -79,8 +90,11 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
 
         @Override
         protected Void doInBackground(Void... params) {
-            for (City city : mStarredCities)
-                city.updateTGPTData(mContext);
+            for (City city : mStarredCities) {
+                if (city.updateTGPTData(mContext)) {
+                    city.getDynamicNotification().setLastNotify(city.getLastUpdate());
+                }
+            }
 
             return null;
         }
@@ -95,8 +109,16 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            ((CityAdapter) getListAdapter()).notifyDataSetChanged();
             mSwipeLayout.setRefreshing(false);
+            if (!mIsCancelled) {
+                ((CityAdapter) getListAdapter()).notifyDataSetChanged();
+            }
+        }
+
+        @Override
+        protected void onCancelled(Void aVoid) {
+            super.onCancelled(aVoid);
+            mIsCancelled = true;
         }
     }
 
@@ -117,6 +139,17 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
         setHasOptionsMenu(true);
 
         return v;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        if (mInitStarredFragment != null)
+            mInitStarredFragment.cancel(true);
+
+        if (mUpdateStarredFragment != null)
+            mUpdateStarredFragment.cancel(true);
     }
 
     @Override

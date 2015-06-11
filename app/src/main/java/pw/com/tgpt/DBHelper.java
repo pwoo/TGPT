@@ -23,7 +23,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "TGPT.db";
     public static DBHelper mInstance;
-    public static final String mDateFormat = "yyyy-MM-dd HH:mm:ss.SSSZ";
+    private static final String mDateFormat = "yyyy-MM-dd HH:mm:ss.SSSZ";
+    private static SimpleDateFormat mDateFormatter = new SimpleDateFormat(mDateFormat);
 
     public static abstract class CityEntry implements BaseColumns {
         public static final String TABLE_NAME = "CITY";
@@ -303,11 +304,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     private String formatDate(Calendar aCalendar) {
-        SimpleDateFormat dateFormatter = new SimpleDateFormat(mDateFormat);
-        StringBuffer buffer = new StringBuffer();
-        dateFormatter.format(aCalendar.getTime(), buffer, new FieldPosition(0));
-
-        return buffer.toString();
+        return mDateFormatter.format(aCalendar.getTime());
     }
 
     private Calendar formatDate(String aString) {

@@ -48,6 +48,7 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         private Context mContext;
         private City mCity;
         private int mDefaultColor;
+        private boolean mIsCancelled = false;
 
         public UpdateCityTask(Context context) {
             super();
@@ -77,63 +78,70 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         @Override
         protected void onPostExecute(Boolean aBool) {
             mSwipeLayout.setRefreshing(false);
+            if (!mIsCancelled) {
+                if (mCity.getLastUpdate() != null) {
+                    StringBuffer dateBuf = new StringBuffer();
+                    SimpleDateFormat dateFormatter = new SimpleDateFormat("EEEE, LLL d yyyy", Locale.CANADA);
 
-            if (mCity.getLastUpdate() != null) {
-                StringBuffer dateBuf = new StringBuffer();
-                SimpleDateFormat dateFormatter = new SimpleDateFormat("EEEE, LLL d yyyy", Locale.CANADA);
+                    dateFormatter.format(mCity.getLastUpdate().getTime(), dateBuf, new FieldPosition(0));
+                    mLastUpdate.setText(dateBuf.toString());
+                }
 
-                dateFormatter.format(mCity.getLastUpdate().getTime(), dateBuf, new FieldPosition(0));
-                mLastUpdate.setText(dateBuf.toString());
+                if (mCity.getCurrentDate() != null) {
+                    StringBuffer dateBuf = new StringBuffer();
+                    SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mmZ", Locale.CANADA);
+
+                    dateFormatter.format(mCity.getCurrentDate().getTime(), dateBuf, new FieldPosition(0));
+                    mCurrentDate.setText("Last updated at " + dateBuf.toString());
+                }
+
+                int color;
+                int directionRes;
+                double regularDiff = mCity.getRegularDiff();
+                switch (mCity.getDirection()) {
+                    case UP:
+                        color = mContext.getResources().getColor(android.R.color.holo_red_light);
+                        directionRes = R.drawable.ic_trending_up_48dp;
+                        break;
+                    case DOWN:
+                        regularDiff = -regularDiff;
+                        color = mContext.getResources().getColor(android.R.color.holo_green_light);
+                        directionRes = R.drawable.ic_trending_down_48dp;
+                        break;
+                    default:
+                        color = mDefaultColor;
+                        directionRes = R.drawable.ic_trending_flat_black_48dp;
+                        break;
+                }
+                mRegularPrice.setTextColor(color);
+                mRegularPrice.setText(new Double(mCity.getRegularPrice()).toString());
+
+
+                if (regularDiff != 0) {
+                    DecimalFormat decimalFormatter = new DecimalFormat(getResources().getString(R.string.decimal_format));
+                    int labelResId = (regularDiff > 1 || regularDiff < -1) ? R.string.units : R.string.unit;
+                    mRegularDiffLabel.setText(getResources().getString(labelResId));
+                    mRegularDiff.setTextColor(color);
+                    mRegularDiff.setText(decimalFormatter.format(regularDiff));
+                }
+
+                mLastWeek.setText(new Double(mCity.getLastWeekRegular()).toString());
+                mLastMonth.setText(new Double(mCity.getLastMonthRegular()).toString());
+                mLastYear.setText(new Double(mCity.getLastYearRegular()).toString());
+
+                mDirection.setImageResource(directionRes);
+
+                if (aBool.booleanValue() == false) {
+                    Toast toast = Toast.makeText(mContext, getResources().getString(R.string.update_failed), Toast.LENGTH_SHORT);
+                    toast.show();
+                }
             }
+        }
 
-            if (mCity.getCurrentDate() != null) {
-                StringBuffer dateBuf = new StringBuffer();
-                SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mmZ", Locale.CANADA);
-
-                dateFormatter.format(mCity.getCurrentDate().getTime(), dateBuf, new FieldPosition(0));
-                mCurrentDate.setText("Last updated at " + dateBuf.toString());
-            }
-
-            int color;
-            int directionRes;
-            double regularDiff = mCity.getRegularDiff();
-            switch (mCity.getDirection()) {
-                case UP:
-                    color = mContext.getResources().getColor(android.R.color.holo_red_light);
-                    directionRes = R.drawable.ic_trending_up_48dp;
-                    break;
-                case DOWN:
-                    regularDiff = -regularDiff;
-                    color = mContext.getResources().getColor(android.R.color.holo_green_light);
-                    directionRes = R.drawable.ic_trending_down_48dp;
-                    break;
-                default:
-                    color =  mDefaultColor;
-                    directionRes = R.drawable.ic_trending_flat_black_48dp;
-                    break;
-            }
-            mRegularPrice.setTextColor(color);
-            mRegularPrice.setText(new Double(mCity.getRegularPrice()).toString());
-
-
-            if (regularDiff != 0) {
-                DecimalFormat decimalFormatter = new DecimalFormat(getResources().getString(R.string.decimal_format));
-                int labelResId = (regularDiff > 1 || regularDiff < -1)? R.string.units : R.string.unit;
-                mRegularDiffLabel.setText(getResources().getString(labelResId));
-                mRegularDiff.setTextColor(color);
-                mRegularDiff.setText(decimalFormatter.format(regularDiff));
-            }
-
-            mLastWeek.setText(new Double(mCity.getLastWeekRegular()).toString());
-            mLastMonth.setText(new Double(mCity.getLastMonthRegular()).toString());
-            mLastYear.setText(new Double(mCity.getLastYearRegular()).toString());
-
-            mDirection.setImageResource(directionRes);
-
-            if (aBool.booleanValue() == false) {
-                Toast toast = Toast.makeText(mContext, getResources().getString(R.string.update_failed), Toast.LENGTH_SHORT);
-                toast.show();
-            }
+        @Override
+        protected void onCancelled(Boolean aBoolean) {
+            super.onCancelled(aBoolean);
+            mIsCancelled = true;
         }
     }
 
