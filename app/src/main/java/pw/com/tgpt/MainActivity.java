@@ -118,6 +118,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         switch (menuItem.getItemId()) {
             case R.id.prices:
+                StarredFragment fragment = new StarredFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, fragment).addToBackStack(null).commit();
                 break;
             case R.id.settings:
                 break;
