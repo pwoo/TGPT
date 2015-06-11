@@ -5,7 +5,7 @@
         app:showAsAction="always"
         android:title="Starred" />
     <item android:id="@+id/city_settings"
-        android:title="Notify on update"
+        android:title="Notify on price update"
         android:icon="@android:drawable/ic_menu_preferences"
         android:checkable="true"/>
 </menu>

@@ -157,14 +157,15 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
     @Override
     public void onResume() {
         super.onResume();
-
+        mSwipeLayout.setRefreshing(true);
         mActivity.getSupportActionBar().setTitle(getResources().getString(R.string.tgpt_prices));
         try {
-            mActivity.getInitDataTask().get(10, TimeUnit.SECONDS);
+            mActivity.getInitDataTask().get();
             mInitStarredFragment = new InitStarredFragmentTask(mActivity);
             mInitStarredFragment.execute();
             mUpdateStarredFragment = new UpdateStarredFragmentTask(mActivity);
             mUpdateStarredFragment.execute();
+            mSwipeLayout.setRefreshing(false);
         } catch (Exception e) {
             Log.e(TAG, "initDataTask failed");
             e.printStackTrace();

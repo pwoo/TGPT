@@ -6,7 +6,7 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-        <TextView android:text="Disable all notifications"
+        <TextView android:text="Disable price notifications on update"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content" />
         <Switch
