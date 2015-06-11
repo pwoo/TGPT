@@ -1,5 +1,6 @@
 package pw.com.tgpt;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -27,6 +28,7 @@ import java.util.Locale;
  */
 public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, MenuItem.OnMenuItemClickListener {
     private static final String TAG = "CFR";
+    private MainActivity mActivity;
     private SwipeRefreshLayout mSwipeLayout;
     private TextView mLastUpdate;
     private TextView mRegularPrice;
@@ -163,6 +165,12 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mActivity = (MainActivity) activity;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null)
@@ -197,8 +205,7 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         super.onResume();
         int cityId = getArguments().getInt("id");
         mCity = City.getCity(cityId);
-        MainActivity activity = (MainActivity) getActivity();
-        activity.getToolbar().setTitle(mCity.getName());
+        mActivity.getSupportActionBar().setTitle(mCity.getName());
 
         handleCity();
     }
@@ -214,7 +221,7 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onPause() {
         super.onPause();
 
-        new PersistDataTask(getActivity()).execute(mCity);
+        new PersistDataTask(mActivity).execute(mCity);
     }
 
     @Override
@@ -247,7 +254,7 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     public void handleCity() {
         if (mCity != null) {
-            mUpdateCityTask = new UpdateCityTask(getActivity());
+            mUpdateCityTask = new UpdateCityTask(mActivity);
             mUpdateCityTask.execute(mCity);
         }
     }
@@ -283,12 +290,12 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         mCity.getDynamicNotification().setDynamic(toggle);
         item.setChecked(toggle);
 
-        Intent intent = new Intent(getActivity(), PushUpdateService.class);
+        Intent intent = new Intent(mActivity, PushUpdateService.class);
         intent.putExtra(PushUpdateService.EXTRA_CITY_ID, mCity.getID());
         if (toggle)
             intent.setAction(PushUpdateService.ACTION_CREATE_DYNAMIC_NOTIFICATION);
         else
             intent.setAction(PushUpdateService.ACTION_CANCEL_DYNAMIC_NOTIFICATION);
-        getActivity().startService(intent);
+        mActivity.startService(intent);
     }
 }
