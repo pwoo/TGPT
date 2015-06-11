@@ -21,7 +21,9 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Created by pwoo on 08/06/15.
@@ -161,7 +163,6 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
             mActivity.getInitDataTask().get(10, TimeUnit.SECONDS);
             mInitStarredFragment = new InitStarredFragmentTask(mActivity);
             mInitStarredFragment.execute();
-            mInitStarredFragment.get(10, TimeUnit.SECONDS);
             mUpdateStarredFragment = new UpdateStarredFragmentTask(mActivity);
             mUpdateStarredFragment.execute();
         } catch (Exception e) {
@@ -195,10 +196,14 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
             mSearchView.setOnItemClickListener(this);
             mSearchView.setSelectAllOnFocus(true);
             mSearchView.setThreshold(1);
-
-            ArrayList<City> list = new ArrayList<City>(City.getCitiesArray().values());
-            ArrayAdapter<City> adapter = new ArrayAdapter<City>(mActivity, R.layout.city_autocomplete_search_item, list);
-            mSearchView.setAdapter(adapter);
+            try {
+                mInitStarredFragment.get(10, TimeUnit.SECONDS);
+                ArrayList<City> list = new ArrayList<City>(City.getCitiesArray().values());
+                ArrayAdapter<City> adapter = new ArrayAdapter<City>(mActivity, R.layout.city_autocomplete_search_item, list);
+                mSearchView.setAdapter(adapter);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
