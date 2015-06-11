@@ -110,6 +110,7 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.starred_fragment, container, false);
         mSwipeLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_container);
+        mSwipeLayout.setProgressViewOffset(true, 0, 0);
         mSwipeLayout.setOnRefreshListener(this);
         mSwipeLayout.setColorSchemeResources(android.R.color.holo_red_light, android.R.color.holo_green_light,
                 android.R.color.holo_blue_light);

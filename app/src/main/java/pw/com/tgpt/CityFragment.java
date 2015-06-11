@@ -135,11 +135,6 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 toast.show();
             }
         }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-            super.onProgressUpdate(values);
-        }
     }
 
     private class PersistDataTask extends AsyncTask<City, Void, Void> {
@@ -196,6 +191,7 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         mLastMonth = (TextView) v.findViewById(R.id.city_fragment_last_month);
         mLastYear = (TextView) v.findViewById(R.id.city_fragment_last_year);
 
+        mSwipeLayout.setProgressViewOffset(false, 0, 0);
         mSwipeLayout.setOnRefreshListener(this);
         mSwipeLayout.setColorSchemeResources(android.R.color.holo_red_light, android.R.color.holo_green_light,
                 android.R.color.holo_blue_light);
