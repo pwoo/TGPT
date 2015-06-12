@@ -71,12 +71,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        Log.v(TAG, "onCreateOptionsMenu");
-        return true;
-    }
-
-    @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         Log.v(TAG, "onPrepareOptionsMenu");
         return true;
@@ -100,6 +94,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void initStarredFragment() {
         StarredFragment fragment = new StarredFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, fragment).commit();
+        Menu menu = mNavigationView.getMenu();
+        if (menu != null) {
+            MenuItem home = menu.findItem(R.id.prices);
+            home.setChecked(true);
+            invalidateOptionsMenu();
+        }
     }
 
     private void initNavigationView() {

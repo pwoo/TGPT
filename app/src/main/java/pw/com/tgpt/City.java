@@ -81,19 +81,14 @@ public class City {
     public static void init(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-        int previousVersion = prefs.getInt("version", -1);
+        int previousVersion = prefs.getInt("version", 0);
         if(previousVersion < BuildConfig.VERSION_CODE) {
             SharedPreferences.Editor editor = prefs.edit();
             editor.putInt("version", BuildConfig.VERSION_CODE);
             editor.apply();
-
-            switch (previousVersion) {
-                case 0:
-                case 1:
-                    parseXML(context);
-                    break;
-                case 2:
-                    break;
+            // First time install
+            if (previousVersion == 0) {
+                parseXML(context);
             }
         }
 
