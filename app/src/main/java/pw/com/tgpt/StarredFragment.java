@@ -8,6 +8,7 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,9 +22,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Created by pwoo on 08/06/15.
@@ -39,7 +38,7 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
     private UpdateStarredFragmentTask mUpdateStarredFragment;
 
     private class InitStarredFragmentTask extends AsyncTask<Void, Void, Void> {
-        private Context mContext;
+        private final Context mContext;
         private boolean mIsCancelled = false;
 
         public InitStarredFragmentTask(Context context) {
@@ -82,7 +81,7 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
     }
 
     private class UpdateStarredFragmentTask extends AsyncTask<Void, Void, Void> {
-        private Context mContext;
+        private final Context mContext;
         private boolean mIsCancelled = false;
 
         public UpdateStarredFragmentTask(Context context) {
@@ -158,7 +157,8 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
     public void onResume() {
         super.onResume();
         mSwipeLayout.setRefreshing(true);
-        mActivity.getSupportActionBar().setTitle(getResources().getString(R.string.tgpt_prices));
+        if (mActivity.getSupportActionBar() != null)
+            mActivity.getSupportActionBar().setTitle(getResources().getString(R.string.tgpt_prices));
         try {
             mActivity.getInitDataTask().get();
             mInitStarredFragment = new InitStarredFragmentTask(mActivity);
@@ -199,7 +199,11 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
             mSearchView.setThreshold(1);
             try {
                 mInitStarredFragment.get(10, TimeUnit.SECONDS);
-                ArrayList<City> list = new ArrayList<City>(City.getCitiesArray().values());
+                SparseArray<City> sparseList = City.getCitiesArray();
+                ArrayList<City> list = new ArrayList<City>(sparseList.size());
+                for (int i = 0; i < sparseList.size(); i++) {
+                    list.add(sparseList.valueAt(i));
+                }
                 ArrayAdapter<City> adapter = new ArrayAdapter<City>(mActivity, R.layout.city_autocomplete_search_item, list);
                 mSearchView.setAdapter(adapter);
             } catch (Exception e) {
@@ -253,8 +257,8 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
 
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         City city = (City) parent.getItemAtPosition(position);
-
-        mActivity.getSupportActionBar().collapseActionView();
+        if (mActivity.getSupportActionBar() != null)
+            mActivity.getSupportActionBar().collapseActionView();
 
         CityFragment cityFragment = CityFragment.newInstance(city.getID());
 

@@ -1,6 +1,5 @@
 package pw.com.tgpt;
 
-import android.content.Context;
 import android.util.Log;
 
 import java.util.Calendar;
@@ -50,14 +49,4 @@ public class Notification {
     public Calendar getLastNotify() { return mLastNotify; }
     public void setLastNotify(Calendar notify) { mLastNotify = notify; }
 
-    public void saveToDB(Context context) {
-        if (mID == -1)
-            DBHelper.getInstance(context).insertNotification(this);
-        else
-            DBHelper.getInstance(context).updateNotification(this);
-    }
-
-    public void removeFromDB(Context context) {
-        DBHelper.getInstance(context).deleteNotification(this);
-    }
 }

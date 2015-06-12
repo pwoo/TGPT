@@ -1,7 +1,6 @@
 package pw.com.tgpt;
 
 import android.app.Activity;
-import android.app.ListFragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -11,25 +10,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.ListView;
 import android.widget.Switch;
 
 public class SettingsFragment extends Fragment implements android.widget.CompoundButton.OnCheckedChangeListener {
-    MainActivity mActivity;
-    Switch mSwitch;
-    boolean mDisableNotifications = false;
+    private MainActivity mActivity;
+    private Switch mSwitch;
+    private boolean mDisableNotifications = false;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
     public SettingsFragment() {
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
     }
 
     @Nullable
@@ -47,8 +39,8 @@ public class SettingsFragment extends Fragment implements android.widget.Compoun
     @Override
     public void onResume() {
         super.onResume();
-
-        mActivity.getSupportActionBar().setTitle(getResources().getString(R.string.tgpt_settings));
+        if (mActivity.getSupportActionBar() != null)
+            mActivity.getSupportActionBar().setTitle(getResources().getString(R.string.tgpt_settings));
     }
 
     @Override
@@ -58,7 +50,7 @@ public class SettingsFragment extends Fragment implements android.widget.Compoun
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mActivity);
         SharedPreferences.Editor prefEditor = pref.edit();
         prefEditor.putBoolean(getResources().getString(R.string.setting_disable_notifications), mDisableNotifications);
-        prefEditor.commit();
+        prefEditor.apply();
     }
 
 
@@ -69,11 +61,6 @@ public class SettingsFragment extends Fragment implements android.widget.Compoun
         mActivity = (MainActivity) activity;
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mActivity);
         mDisableNotifications = pref.getBoolean(getResources().getString(R.string.setting_disable_notifications), false);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
     }
 
     @Override

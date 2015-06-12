@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.SparseArray;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,14 +23,13 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 
 /**
  * Created by PW on 2015-04-26.
  */
 public class City {
     private static final String TAG = "CITY";
-    private static HashMap<Integer, City> mCityList;
+    private static SparseArray<City> mCityList;
 
     private int mID;
     private String mName;
@@ -52,7 +52,7 @@ public class City {
 
         private final String desc;
         private final int id;
-        private Direction(String value, int id) {
+        Direction(String value, int id) {
             desc = value;
             this.id = id;
         }
@@ -79,28 +79,34 @@ public class City {
     }
 
     public static void init(Context context) {
-        Resources r = context.getResources();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         int previousVersion = prefs.getInt("version", -1);
         if(previousVersion < BuildConfig.VERSION_CODE) {
             SharedPreferences.Editor editor = prefs.edit();
             editor.putInt("version", BuildConfig.VERSION_CODE);
-            editor.commit();
+            editor.apply();
 
-            parseXML(context);
+            switch (previousVersion) {
+                case 0:
+                case 1:
+                    parseXML(context);
+                    break;
+                case 2:
+                    break;
+            }
         }
 
         if (mCityList == null)
             mCityList = DBHelper.getInstance(context).getCities();
     }
 
-    public static HashMap<Integer, City> getCitiesArray() {
+    public static SparseArray<City> getCitiesArray() {
         return mCityList;
     }
 
     public static City getCity(int id) {
-        if (mCityList.isEmpty()) {
+        if (mCityList.size() == 0) {
             Log.w(TAG, "City class uninitialized!");
         }
 
@@ -110,7 +116,7 @@ public class City {
     private City() {
     }
 
-    protected City(int mID, String mName) {
+    City(int mID, String mName) {
         this.mID = mID;
         this.mName = mName;
     }
@@ -201,10 +207,10 @@ public class City {
 
         setRegularPrice(parser.getDouble(appContext.getString(R.string.tgpt_regular_price)));
         setRegularDiff(parser.getDouble(appContext.getString(R.string.tgpt_regular_diff)));
-        String temp = parser.getString("regulardirection");
+        String temp = parser.getString(appContext.getString(R.string.tgpt_direction));
         try {
             setLastWeekRegular(parser.getDouble(appContext.getString(R.string.tgpt_last_week_regular)));
-            setLastMonthRegular(parser.getDouble(appContext.getString(R.string.tgpt_last_week_regular)));
+            setLastMonthRegular(parser.getDouble(appContext.getString(R.string.tgpt_last_month_regular)));
             setLastYearRegular(parser.getDouble(appContext.getString(R.string.tgpt_last_year_regular)));
         }
         catch (JSONException e) {

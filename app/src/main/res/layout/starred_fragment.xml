@@ -11,13 +11,13 @@
 
         <ListView android:id="@id/android:list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
             android:drawSelectorOnTop="false"/>
 
         <TextView android:id="@id/android:empty"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="No starred cities added!"/>
+            android:text="@string/no_starred_cities_label"/>
     </LinearLayout>
 </android.support.v4.widget.SwipeRefreshLayout>

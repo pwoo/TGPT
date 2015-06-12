@@ -24,7 +24,6 @@ public class PushUpdateService extends IntentService {
     public static final String ACTION_DYNAMIC_NOTIFICATION = "pw.com.tgpt.action.DYNAMIC_NOTIFICATION";
     public static final String ACTION_CANCEL_DYNAMIC_NOTIFICATION = "pw.com.tgpt.action.CANCEL_DYNAMIC_NOTIFICATION";
     public static final String EXTRA_CITY_ID = "pw.com.tgpt.action.NOTIFICATION_CITY_ID";
-    private static final String GROUP_KEY_NOTIFICATIONS = "pw.com.tgpt.notification";
 
     @Override
     public void onCreate() {
@@ -35,11 +34,6 @@ public class PushUpdateService extends IntentService {
 
     public PushUpdateService() {
         super("PushUpdateService");
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 
     /**

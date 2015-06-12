@@ -2,13 +2,15 @@
     <string name="app_name">TGPT Lite</string>
     <string name="search_title">City</string>
     <string name="search_hint">City</string>
-    <string name="regular_price">Regular Price</string>
     <string name="update_failed">Update failed</string>
     <string name="setting_disable_notifications">noti_disable</string>
+    <string name="settings_disable_notifications_label">Disable price notifications on update</string>
+    <string name="no_starred_cities_label">No starred cities added!</string>
     <string name="last_week">Last Week</string>
     <string name="last_month">Last Month</string>
     <string name="last_year">Last Year</string>
-    <string name="action_settings">Settings</string>
+    <string name="starred_label">Starred</string>
+    <string name="notify_on_update_label">Notify on price update</string>
     <string name="unit">cent\n/litre</string>
     <string name="units">cents\n/litre</string>
     <string name="json_url">http://tomorrowsgaspricetoday.com/feed-mobile-jsonout.php?city=</string>
@@ -20,6 +22,7 @@
     <string name="tgpt_item">item</string>
     <string name="tgpt_regular_price">regularprice</string>
     <string name="tgpt_regular_diff">regulardifference</string>
+    <string name="tgpt_direction">regulardirection</string>
     <string name="tgpt_last_week_regular">lastweekregular</string>
     <string name="tgpt_last_month_regular">lastmonthregular</string>
     <string name="tgpt_last_year_regular">lastyearregular</string>

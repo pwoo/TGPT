@@ -7,24 +7,23 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 import android.util.Log;
+import android.util.SparseArray;
 
-import java.text.FieldPosition;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 
 /**
  * Created by PW on 2015-06-07.
  */
 public class DBHelper extends SQLiteOpenHelper {
-    public static final String TAG = "DB";
-    public static final int DATABASE_VERSION = 1;
-    public static final String DATABASE_NAME = "TGPT.db";
-    public static DBHelper mInstance;
+    private static final String TAG = "DB";
+    private static final int DATABASE_VERSION = 1;
+    private static final String DATABASE_NAME = "TGPT.db";
+    private static DBHelper mInstance;
     private static final String mDateFormat = "yyyy-MM-dd HH:mm:ss.SSSZ";
-    private static SimpleDateFormat mDateFormatter = new SimpleDateFormat(mDateFormat);
+    private static final SimpleDateFormat mDateFormatter = new SimpleDateFormat(mDateFormat);
 
     public static abstract class CityEntry implements BaseColumns {
         public static final String TABLE_NAME = "CITY";
@@ -50,7 +49,7 @@ public class DBHelper extends SQLiteOpenHelper {
         public static final String COLUMN_NAME_LAST_NOTIFY = "LASTNOTIFY";
     }
 
-    private static StringBuilder CREATE_TABLE_CITIES = new StringBuilder()
+    private static final StringBuilder CREATE_TABLE_CITIES = new StringBuilder()
             .append("CREATE TABLE ")
             .append(CityEntry.TABLE_NAME)
             .append('(')
@@ -68,7 +67,7 @@ public class DBHelper extends SQLiteOpenHelper {
             .append(CityEntry.COLUMN_NAME_ENABLED).append(" BOOLEAN DEFAULT 1")
             .append(')');
 
-    private static StringBuilder CREATE_TABLE_NOTIFICATIONS = new StringBuilder()
+    private static final StringBuilder CREATE_TABLE_NOTIFICATIONS = new StringBuilder()
             .append("CREATE TABLE ")
             .append(Notifications.TABLE_NAME)
             .append('(')
@@ -85,7 +84,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return mInstance;
     }
 
-    public DBHelper(Context context) {
+    private DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -103,11 +102,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-    }
-
-    @Override
-    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        super.onDowngrade(db, oldVersion, newVersion);
     }
 
     public void insertCity(int id, String name) {
@@ -131,7 +125,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void insertNotification(Notification n) {
         SQLiteDatabase db = getWritableDatabase();
         try {
-            long key = -1;
+            long key;
             Log.v(TAG, "Notification " + n.getID() + " beginning insert");
             db.beginTransaction();
             ContentValues values = new ContentValues();
@@ -220,8 +214,8 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public HashMap<Integer, City> getCities() {
-        HashMap<Integer, City> cities = new HashMap<Integer, City>();
+    public SparseArray<City> getCities() {
+        SparseArray<City> cities = new SparseArray<>();
         String query = "SELECT * from " + CityEntry.TABLE_NAME;
 
         SQLiteDatabase db = getReadableDatabase();
@@ -268,7 +262,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return cities;
     }
 
-    public ArrayList<Notification> getNotifications(City city) {
+    private ArrayList<Notification> getNotifications(City city) {
         ArrayList<Notification> notifications = new ArrayList<Notification>();
 
         StringBuilder query = new StringBuilder()
@@ -284,7 +278,6 @@ public class DBHelper extends SQLiteOpenHelper {
         if (c.moveToFirst()) {
             do {
                 long id = c.getInt(c.getColumnIndex(Notifications.COLUMN_NAME_ID));
-                int cityId = c.getInt(c.getColumnIndex(Notifications.COLUMN_NAME_CITY_ID));
                 boolean isDynamic = c.getInt(c.getColumnIndex(Notifications.COLUMN_NAME_DYNAMIC)) != 0;
                 String lastNotify = c.getString(c.getColumnIndex(Notifications.COLUMN_NAME_LAST_NOTIFY));
 
@@ -315,7 +308,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<City> getStarredCities() {
-        if (City.getCitiesArray() == null || City.getCitiesArray().isEmpty())
+        if (City.getCitiesArray() == null || City.getCitiesArray().size() == 0)
             return null;
 
         ArrayList<City> starredCities = new ArrayList<City>();

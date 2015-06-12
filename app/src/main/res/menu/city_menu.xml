@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/city_starred"
         app:showAsAction="always"
-        android:title="Starred" />
+        android:title="@string/starred_label" />
     <item android:id="@+id/city_settings"
-        android:title="Notify on price update"
+        android:title="@string/notify_on_update_label"
         android:icon="@android:drawable/ic_menu_preferences"
         android:checkable="true"/>
 </menu>

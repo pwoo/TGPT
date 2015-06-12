@@ -14,11 +14,11 @@ import java.util.List;
 /**
  * Created by PW on 2015-06-10.
  */
-public class CityAdapter extends ArrayAdapter<City> {
+class CityAdapter extends ArrayAdapter<City> {
     private static final String TAG = "CADR";
     private Context mContext;
-    private int mResource = R.layout.starred_item;
-    private LayoutInflater  mInflater;
+    private final int mResource = R.layout.starred_item;
+    private final LayoutInflater mInflater;
 
     public CityAdapter(Context context, List<City> objects) {
         super(context, R.layout.starred_item, objects);
@@ -48,7 +48,7 @@ public class CityAdapter extends ArrayAdapter<City> {
         name.setText(city.getName());
 
         regularPrice = (TextView) view.findViewById(R.id.starred_city_reg_price);
-        regularPrice.setText(new Double(city.getRegularPrice()).toString());
+        regularPrice.setText(Double.toString(city.getRegularPrice()));
 
         regularDiff = (TextView) view.findViewById(R.id.starred_city_reg_diff);
 

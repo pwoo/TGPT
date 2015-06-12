@@ -1,7 +1,6 @@
 package pw.com.tgpt;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -35,11 +34,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 result = Boolean.TRUE;
             }
             return result;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
         }
 
         @Override
@@ -142,10 +136,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public ActionBar getToolbar() {
-        return mActionBar;
     }
 
     public InitDataTask getInitDataTask() { return mInitDataTask; }

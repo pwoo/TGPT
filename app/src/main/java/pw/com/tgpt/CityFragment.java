@@ -42,10 +42,9 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private TextView mCurrentDate;
     private UpdateCityTask mUpdateCityTask;
     private City mCity;
-    private Notification mDynamicNotification;
 
     private class UpdateCityTask extends AsyncTask<City, Void, Boolean> {
-        private Context mContext;
+        private final Context mContext;
         private City mCity;
         private int mDefaultColor;
         private boolean mIsCancelled = false;
@@ -114,7 +113,7 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                         break;
                 }
                 mRegularPrice.setTextColor(color);
-                mRegularPrice.setText(new Double(mCity.getRegularPrice()).toString());
+                mRegularPrice.setText(Double.toString(mCity.getRegularPrice()));
 
 
                 if (regularDiff != 0) {
@@ -125,13 +124,13 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                     mRegularDiff.setText(decimalFormatter.format(regularDiff));
                 }
 
-                mLastWeek.setText(new Double(mCity.getLastWeekRegular()).toString());
-                mLastMonth.setText(new Double(mCity.getLastMonthRegular()).toString());
-                mLastYear.setText(new Double(mCity.getLastYearRegular()).toString());
+                mLastWeek.setText(Double.toString(mCity.getLastWeekRegular()));
+                mLastMonth.setText(Double.toString(mCity.getLastMonthRegular()));
+                mLastYear.setText(Double.toString(mCity.getLastYearRegular()));
 
                 mDirection.setImageResource(directionRes);
 
-                if (aBool.booleanValue() == false) {
+                if (!aBool.booleanValue()) {
                     Toast toast = Toast.makeText(mContext, getResources().getString(R.string.update_failed), Toast.LENGTH_SHORT);
                     toast.show();
                 }
@@ -146,7 +145,7 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     private class PersistDataTask extends AsyncTask<City, Void, Void> {
-        private Context mContext;
+        private final Context mContext;
 
         public PersistDataTask(Context context) { mContext = context; }
         @Override
@@ -211,7 +210,8 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         super.onResume();
         int cityId = getArguments().getInt("id");
         mCity = City.getCity(cityId);
-        mActivity.getSupportActionBar().setTitle(mCity.getName());
+        if (mActivity.getSupportActionBar() != null)
+            mActivity.getSupportActionBar().setTitle(mCity.getName());
 
         handleCity();
     }
@@ -255,7 +255,7 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         handleCity();
     }
 
-    public void handleCity() {
+    private void handleCity() {
         if (mCity != null) {
             mUpdateCityTask = new UpdateCityTask(mActivity);
             mUpdateCityTask.execute(mCity);
@@ -279,14 +279,14 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         return result;
     }
 
-    public void toggleStar(MenuItem item) {
+    private void toggleStar(MenuItem item) {
         boolean toggle = !mCity.getStarred();
         int starResId = toggle? R.drawable.ic_star_24dp : R.drawable.ic_star_border_black_24dp;
         mCity.setStarred(toggle);
         item.setIcon(starResId);
     }
 
-    public void toggleDynamicNotifications(MenuItem item) {
+    private void toggleDynamicNotifications(MenuItem item) {
         mCity.getDynamicNotification().setLastNotify(mCity.getLastUpdate());
 
         boolean toggle = !mCity.getDynamicNotification().getDynamic();
