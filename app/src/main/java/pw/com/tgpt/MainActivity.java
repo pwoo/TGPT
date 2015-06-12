@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void initStarredFragment() {
         StarredFragment fragment = new StarredFragment();
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, fragment).addToBackStack(null).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, fragment).commit();
         Menu menu = mNavigationView.getMenu();
         if (menu != null) {
             MenuItem home = menu.findItem(R.id.prices);
