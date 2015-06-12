@@ -16,6 +16,7 @@ public class SettingsFragment extends Fragment implements android.widget.Compoun
     private MainActivity mActivity;
     private Switch mSwitch;
     private boolean mDisableNotifications = false;
+    private final int mNavItemId = R.id.settings;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -32,6 +33,7 @@ public class SettingsFragment extends Fragment implements android.widget.Compoun
         mSwitch = (Switch) v.findViewById(R.id.settings_disable_notifications_toggle);
         mSwitch.setOnCheckedChangeListener(this);
         mSwitch.setChecked(mDisableNotifications);
+        mActivity.selectNavigationItem(mNavItemId);
 
         return v;
     }

@@ -36,6 +36,7 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
     private ArrayList<City> mStarredCities;
     private InitStarredFragmentTask mInitStarredFragment;
     private UpdateStarredFragmentTask mUpdateStarredFragment;
+    private final int mNavItemId = R.id.prices;
 
     private class InitStarredFragmentTask extends AsyncTask<Void, Void, Void> {
         private final Context mContext;
@@ -132,14 +133,16 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.starred_fragment, container, false);
         mSwipeLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_container);
-        mSwipeLayout.setProgressViewOffset(true, 0, 0);
+//        mSwipeLayout.setProgressViewOffset(true, 0, 0);
         mSwipeLayout.setOnRefreshListener(this);
         mSwipeLayout.setColorSchemeResources(android.R.color.holo_red_light, android.R.color.holo_green_light,
                 android.R.color.holo_blue_light);
         setHasOptionsMenu(true);
 
+        mActivity.selectNavigationItem(mNavItemId);
         return v;
     }
 
@@ -150,13 +153,13 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
         City city = (City) getListAdapter().getItem(position);
         CityFragment cityFragment = CityFragment.newInstance(city.getID());
 
-        mActivity.getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, cityFragment).commit();
+        mActivity.getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, cityFragment).addToBackStack(null).commit();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mSwipeLayout.setRefreshing(true);
+//        mSwipeLayout.setRefreshing(true);
         if (mActivity.getSupportActionBar() != null)
             mActivity.getSupportActionBar().setTitle(getResources().getString(R.string.tgpt_prices));
         try {
@@ -262,7 +265,7 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
 
         CityFragment cityFragment = CityFragment.newInstance(city.getID());
 
-        mActivity.getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, cityFragment).commit();
+        mActivity.getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, cityFragment).addToBackStack(null).commit();
     }
 
     @Override

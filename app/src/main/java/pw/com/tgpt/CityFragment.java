@@ -71,13 +71,14 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             super.onPreExecute();
 
             mDefaultColor = mRegularPrice.getCurrentTextColor();
-            mSwipeLayout.setRefreshing(true);
+//            mSwipeLayout.setRefreshing(true);
         }
 
         @Override
         protected void onPostExecute(Boolean aBool) {
             mSwipeLayout.setRefreshing(false);
             if (!mIsCancelled) {
+                Log.v(TAG, "onPostExecute");
                 if (mCity.getLastUpdate() != null) {
                     StringBuffer dateBuf = new StringBuffer();
                     SimpleDateFormat dateFormatter = new SimpleDateFormat("EEEE, LLL d yyyy", Locale.CANADA);
@@ -185,6 +186,7 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.city_fragment, container, false);
 
         mSwipeLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_container);
@@ -203,7 +205,7 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         mSwipeLayout.setColorSchemeResources(android.R.color.holo_red_light, android.R.color.holo_green_light,
                 android.R.color.holo_blue_light);
 
-        mActivity.selectNavigationItems(-1);
+        mActivity.selectNavigationItem(-1);
 
         return v;
     }
@@ -235,6 +237,13 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             mUpdateCityTask.cancel(true);
 
         new PersistDataTask(mActivity).execute(mCity);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        mSwipeLayout.setRefreshing(false);
     }
 
     @Override
