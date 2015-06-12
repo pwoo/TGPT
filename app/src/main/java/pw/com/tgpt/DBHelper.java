@@ -215,6 +215,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public SparseArray<City> getCities() {
+        Log.v(TAG, "getCities");
         SparseArray<City> cities = new SparseArray<>();
         String query = "SELECT * from " + CityEntry.TABLE_NAME;
 
@@ -260,6 +261,58 @@ public class DBHelper extends SQLiteOpenHelper {
         c.close();
 
         return cities;
+    }
+
+    public City getCity(int cityId) {
+        City city = null;
+        String query = "SELECT * from " +
+                CityEntry.TABLE_NAME +
+                " WHERE " +
+                CityEntry.COLUMN_NAME_CITY_ID +
+                "=" +
+                cityId;
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.rawQuery(query, null);
+        if (c.moveToFirst()) {
+            do {
+                city = new City(
+                        c.getInt(c.getColumnIndex(CityEntry.COLUMN_NAME_CITY_ID)),
+                        c.getString(c.getColumnIndex(CityEntry.COLUMN_NAME_CITY_NAME)));
+                Log.v(TAG, "getCity(): " + city.getName() + " found");
+                city.setRegularPrice(c.getDouble(c.getColumnIndex(CityEntry.COLUMN_NAME_REGULAR_PRICE)));
+                city.setRegularDiff(c.getDouble(c.getColumnIndex(CityEntry.COLUMN_NAME_REGULAR_DIFF)));
+                city.setLastWeekRegular(c.getDouble(c.getColumnIndex(CityEntry.COLUMN_NAME_LAST_WEEK_REGULAR)));
+                city.setLastMonthRegular(c.getDouble(c.getColumnIndex(CityEntry.COLUMN_NAME_LAST_MONTH_REGULAR)));
+                city.setLastYearRegular(c.getDouble(c.getColumnIndex(CityEntry.COLUMN_NAME_LAST_YR_REGULAR)));
+                city.setEnabled(c.getInt(c.getColumnIndex(CityEntry.COLUMN_NAME_ENABLED)) != 0);
+                city.setStarred(c.getInt(c.getColumnIndex(CityEntry.COLUMN_NAME_STARRED)) != 0);
+                String lastUpdateString = c.getString(c.getColumnIndex(CityEntry.COLUMN_NAME_LAST_UPDATE));
+                if (lastUpdateString != null) {
+                    Calendar lastUpdate = formatDate(lastUpdateString);
+                    city.setLastUpdate(lastUpdate);
+                }
+
+                String currentDateString = c.getString(c.getColumnIndex(CityEntry.COLUMN_NAME_CURRENT_DATE));
+                if (currentDateString != null) {
+                    Calendar currentDate = formatDate(currentDateString);
+                    city.setCurrentDate(currentDate);
+                }
+
+                City.Direction dir = City.Direction.toDirection(c.getInt(c.getColumnIndex(CityEntry.COLUMN_NAME_REGULAR_DIRECTION)));
+                city.setDirection(dir);
+
+                ArrayList<Notification> notifications = getNotifications(city);
+                if (!notifications.isEmpty()) {
+                    Notification n = notifications.get(0);
+                    city.setDynamicNotification(n);
+                }
+
+            } while (c.moveToNext());
+        }
+        c.close();
+
+        return city;
     }
 
     private ArrayList<Notification> getNotifications(City city) {

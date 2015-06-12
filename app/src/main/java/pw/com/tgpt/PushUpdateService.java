@@ -28,8 +28,6 @@ public class PushUpdateService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        City.init(this);
     }
 
     public PushUpdateService() {
@@ -74,9 +72,9 @@ public class PushUpdateService extends IntentService {
      *
      * @param intent
      */
-    private void handleActionNotification(Intent intent) {
+    private void handleActionNotification(Intent intent, City savedCity) {
         String action = intent.getAction();
-        Log.v(TAG, "handleActionNotification(" + action + ")");
+        Log.v(TAG, "handleActionNotification(" + action + ") " + savedCity.getName());
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean disableNotifications = prefs.getBoolean(getResources().getString(R.string.setting_disable_notifications), false);
@@ -84,7 +82,6 @@ public class PushUpdateService extends IntentService {
         if (disableNotifications)
             return;
 
-        final City savedCity = City.getCity(intent.getIntExtra(EXTRA_CITY_ID, -1));
         if (savedCity != null) {
             Notification notification = savedCity.getDynamicNotification();
             if (savedCity.updateTGPTData(this)) {
@@ -92,7 +89,7 @@ public class PushUpdateService extends IntentService {
 
                 // Check if TGPT JSON data has been updated with tomorrow's price.
                 Calendar lastNotify = notification.getLastNotify();
-                Log.v(TAG, savedCity.getLastUpdate().toString());
+                Log.v(TAG, "savedCity getLastUpdate: " + savedCity.getLastUpdate().toString());
                 if (lastNotify == null || savedCity.getLastUpdate().after(lastNotify)) {
                     sendNotification = true;
                     notification.setLastNotify(savedCity.getLastUpdate());
@@ -155,10 +152,16 @@ public class PushUpdateService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         Log.v(TAG, "onHandleIntent");
         if (intent != null) {
-            City c = City.getCity(intent.getIntExtra(EXTRA_CITY_ID, -1));
+            int cityId = intent.getIntExtra(EXTRA_CITY_ID, -1);
+            City c = City.getCity(cityId);
+            if (c == null) {
+                // Process likely killed before invocation. Instead of re-initializing entire array,
+                // just grab the single object needed to update.
+                c = DBHelper.getInstance(this).getCity(cityId);
+            }
             switch (intent.getAction()) {
                 case ACTION_DYNAMIC_NOTIFICATION:
-                    handleActionNotification(intent);
+                    handleActionNotification(intent, c);
                     break;
                 case ACTION_CREATE_DYNAMIC_NOTIFICATION: {
                     if (c != null)
