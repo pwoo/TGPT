@@ -90,11 +90,12 @@ public class PushUpdateService extends IntentService {
             if (savedCity.updateTGPTData(this)) {
                 boolean sendNotification = false;
 
-                    // Check if TGPT JSON data has been updated with tomorrow's price.
+                // Check if TGPT JSON data has been updated with tomorrow's price.
                 Calendar lastNotify = notification.getLastNotify();
+                Log.v(TAG, savedCity.getLastUpdate().toString());
                 if (lastNotify == null || savedCity.getLastUpdate().after(lastNotify)) {
                     sendNotification = true;
-
+                    notification.setLastNotify(savedCity.getLastUpdate());
                     Log.v(TAG, "savedCity: " + savedCity.getLastUpdate().toString());
                     if (lastNotify != null)
                         Log.v(TAG, "lastDate: " + lastNotify.toString());
@@ -146,6 +147,8 @@ public class PushUpdateService extends IntentService {
                 }
             }
         }
+        else
+            Log.e(TAG, "City " + intent.getIntExtra(EXTRA_CITY_ID, -1) + "not found");
     }
 
     @Override

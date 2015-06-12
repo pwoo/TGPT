@@ -299,8 +299,6 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     private void toggleDynamicNotifications(MenuItem item) {
-        mCity.getDynamicNotification().setLastNotify(mCity.getLastUpdate());
-
         boolean toggle = !mCity.getDynamicNotification().getDynamic();
         mCity.getDynamicNotification().setDynamic(toggle);
         item.setChecked(toggle);
