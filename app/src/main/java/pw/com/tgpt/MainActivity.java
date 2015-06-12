@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         Log.v(TAG, "onPrepareOptionsMenu");
+
         return true;
     }
 
@@ -97,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Menu menu = mNavigationView.getMenu();
         if (menu != null) {
             MenuItem home = menu.findItem(R.id.prices);
+            home.setCheckable(true);
             home.setChecked(true);
             invalidateOptionsMenu();
         }
@@ -109,8 +111,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
+        menuItem.setCheckable(true);
         menuItem.setChecked(true);
         Fragment fragment = null;
+
+        for (int i = 0; i < mNavigationView.getMenu().size(); i++) {
+            MenuItem tempItem = mNavigationView.getMenu().getItem(i);
+            if (menuItem == tempItem)
+                continue;
+
+            tempItem.setCheckable(false);
+            tempItem.setChecked(false);
+        }
+
         switch (menuItem.getItemId()) {
             case R.id.prices:
                 fragment = new StarredFragment();
@@ -120,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
         }
         if (fragment != null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, fragment).addToBackStack(null).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, fragment).commit();
         }
 
         mDrawerLayout.closeDrawer(mNavigationView);
@@ -139,4 +152,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public InitDataTask getInitDataTask() { return mInitDataTask; }
+
+    public void selectNavigationItems(int itemId) {
+        Menu menu = mNavigationView.getMenu();
+        switch (itemId) {
+            case -1:
+                for (int i = 0; i < menu.size(); i++) {
+                    MenuItem item = menu.getItem(i);
+                    item.setCheckable(false);
+                    item.setChecked(false);
+                }
+                break;
+        }
+
+        invalidateOptionsMenu();
+    }
 }

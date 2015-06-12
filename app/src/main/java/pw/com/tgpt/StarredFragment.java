@@ -150,7 +150,7 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
         City city = (City) getListAdapter().getItem(position);
         CityFragment cityFragment = CityFragment.newInstance(city.getID());
 
-        mActivity.getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, cityFragment).addToBackStack(null).commit();
+        mActivity.getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, cityFragment).commit();
     }
 
     @Override
@@ -262,7 +262,7 @@ public class StarredFragment extends ListFragment implements SwipeRefreshLayout.
 
         CityFragment cityFragment = CityFragment.newInstance(city.getID());
 
-        mActivity.getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, cityFragment).addToBackStack(null).commit();
+        mActivity.getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, cityFragment).commit();
     }
 
     @Override

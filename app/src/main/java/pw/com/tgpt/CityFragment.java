@@ -202,6 +202,9 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         mSwipeLayout.setOnRefreshListener(this);
         mSwipeLayout.setColorSchemeResources(android.R.color.holo_red_light, android.R.color.holo_green_light,
                 android.R.color.holo_blue_light);
+
+        mActivity.selectNavigationItems(-1);
+
         return v;
     }
 
