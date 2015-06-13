@@ -20,12 +20,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
+                <ProgressBar
+                    android:id="@+id/city_fragment_progress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:indeterminateOnly="true"/>
                 <TextView android:id="@+id/city_fragment_regular_price"
                     android:textSize="60sp"
                     android:textStyle="bold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:visibility="gone"
                     />
 
                 <ImageView android:id="@+id/city_fragment_direction"

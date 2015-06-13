@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +41,7 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private TextView mLastYear;
     private ImageView mDirection;
     private TextView mCurrentDate;
+    private ProgressBar mProgressBar;
     private UpdateCityTask mUpdateCityTask;
     private City mCity;
 
@@ -71,7 +73,8 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             super.onPreExecute();
 
             mDefaultColor = mRegularPrice.getCurrentTextColor();
-//            mSwipeLayout.setRefreshing(true);
+            mProgressBar.setVisibility(View.VISIBLE);
+            mRegularPrice.setVisibility(View.GONE);
         }
 
         @Override
@@ -79,6 +82,8 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             mSwipeLayout.setRefreshing(false);
             if (!mIsCancelled) {
                 Log.v(TAG, "onPostExecute");
+                mProgressBar.setVisibility(View.GONE);
+                mRegularPrice.setVisibility(View.VISIBLE);
                 if (mCity.getLastUpdate() != null) {
                     StringBuffer dateBuf = new StringBuffer();
                     SimpleDateFormat dateFormatter = new SimpleDateFormat("EEEE, LLL d yyyy", Locale.CANADA);
@@ -199,7 +204,7 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         mLastWeek = (TextView) v.findViewById(R.id.city_fragment_last_week);
         mLastMonth = (TextView) v.findViewById(R.id.city_fragment_last_month);
         mLastYear = (TextView) v.findViewById(R.id.city_fragment_last_year);
-
+        mProgressBar = (ProgressBar) v.findViewById(R.id.city_fragment_progress);
         mSwipeLayout.setProgressViewOffset(false, 0, 0);
         mSwipeLayout.setOnRefreshListener(this);
         mSwipeLayout.setColorSchemeResources(android.R.color.holo_red_light, android.R.color.holo_green_light,
