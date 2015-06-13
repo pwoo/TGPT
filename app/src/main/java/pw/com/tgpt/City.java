@@ -103,6 +103,7 @@ public class City {
     public static City getCity(int id) {
         if (mCityList == null || mCityList.size() == 0) {
             Log.w(TAG, "City class uninitialized!");
+            return null;
         }
 
         return mCityList.get(id);
