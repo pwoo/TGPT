@@ -301,6 +301,10 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         int starResId = toggle? R.drawable.ic_star_24dp : R.drawable.ic_star_border_black_24dp;
         mCity.setStarred(toggle);
         item.setIcon(starResId);
+
+        if (!toggle) {
+            mCity.getDynamicNotification().setDynamic(false);
+        }
     }
 
     private void toggleDynamicNotifications(MenuItem item) {
