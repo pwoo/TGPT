@@ -183,8 +183,7 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null)
-            setArguments(savedInstanceState);
+
         setHasOptionsMenu(true);
     }
 
