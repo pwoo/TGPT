@@ -121,14 +121,11 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 mRegularPrice.setTextColor(color);
                 mRegularPrice.setText(Double.toString(mCity.getRegularPrice()));
 
-
-                if (regularDiff != 0) {
-                    DecimalFormat decimalFormatter = new DecimalFormat(getResources().getString(R.string.decimal_format));
-                    int labelResId = (regularDiff > 1 || regularDiff < -1) ? R.string.units : R.string.unit;
-                    mRegularDiffLabel.setText(getResources().getString(labelResId));
-                    mRegularDiff.setTextColor(color);
-                    mRegularDiff.setText(decimalFormatter.format(regularDiff));
-                }
+                DecimalFormat decimalFormatter = new DecimalFormat(getResources().getString(R.string.decimal_format));
+                int labelResId = (regularDiff > 1 || regularDiff < -1) ? R.string.units : R.string.unit;
+                mRegularDiffLabel.setText(getResources().getString(labelResId));
+                mRegularDiff.setTextColor(color);
+                mRegularDiff.setText(decimalFormatter.format(regularDiff));
 
                 mLastWeek.setText(Double.toString(mCity.getLastWeekRegular()));
                 mLastMonth.setText(Double.toString(mCity.getLastMonthRegular()));
@@ -204,7 +201,6 @@ public class CityFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         mLastMonth = (TextView) v.findViewById(R.id.city_fragment_last_month);
         mLastYear = (TextView) v.findViewById(R.id.city_fragment_last_year);
         mProgressBar = (ProgressBar) v.findViewById(R.id.city_fragment_progress);
-        mSwipeLayout.setProgressViewOffset(false, 0, 0);
         mSwipeLayout.setOnRefreshListener(this);
         mSwipeLayout.setColorSchemeResources(android.R.color.holo_red_light, android.R.color.holo_green_light,
                 android.R.color.holo_blue_light);
