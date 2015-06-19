@@ -16,4 +16,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"/>
     </RelativeLayout>
+    <TextView android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textStyle="italic"
+        android:textSize="10dp"
+        android:text="\tNotifications can be enabled individually in each city's menu"/>
 </LinearLayout>
